@@ -214,21 +214,7 @@ tbody tr:hover td{background:#faf8f4;}
     <div class="topbar-left">
       <div class="page-title" id="topbar-title">Dashboard</div>
       <div class="month-sel" onclick="toggleMonthPicker()" id="month-sel-btn" style="position:relative;">📅 <span id="month-disp">June 2026</span> ▾</div>
-      <div id="month-picker" style="display:none;position:fixed;top:64px;left:280px;z-index:9999;background:white;border:1px solid #e8e2d8;border-radius:10px;box-shadow:0 8px 32px rgba(13,27,42,0.15);padding:16px;width:280px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--text-mid);text-transform:uppercase;letter-spacing:.08em;">Select Month</div>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <button onclick="changePickerYear(-1)" style="background:var(--cream);border:1px solid #ddd;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:12px;font-family:DM Sans,sans-serif;">&#9664;</button>
-            <span id="picker-year" style="font-weight:700;font-size:13px;color:var(--navy);min-width:38px;text-align:center;">2026</span>
-            <button onclick="changePickerYear(1)" style="background:var(--cream);border:1px solid #ddd;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:12px;font-family:DM Sans,sans-serif;">&#9654;</button>
-          </div>
-        </div>
-        <div id="month-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;"></div>
-        <div style="margin-top:10px;padding-top:10px;border-top:1px solid #ede8df;display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:10px;color:var(--text-mute);">Data filtered by selected month</span>
-          <button onclick="goToLatestMonth()" style="background:var(--navy);color:var(--gold);border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;">Latest</button>
-        </div>
-      </div>
+
     </div>
     <div class="topbar-right">
       <button class="btn-refresh" onclick="refreshAllData()">⟳ Refresh Data</button>
@@ -838,9 +824,13 @@ function showView(id) {
 function toggleMonthPicker() {
   var p = document.getElementById('month-picker');
   if (p.style.display === 'none') {
+    // Position relative to the button
+    var btn = document.getElementById('month-sel-btn');
+    var rect = btn.getBoundingClientRect();
+    p.style.top = (rect.bottom + 6) + 'px';
+    p.style.left = rect.left + 'px';
     buildMonthGrid();
     p.style.display = 'block';
-    // close on outside click
     setTimeout(function() {
       document.addEventListener('click', closePickerOutside, {once:true});
     }, 10);
@@ -1372,5 +1362,18 @@ setTimeout(function() {
   });
 }, 400);
 </script>
-</body>
-</html>
+
+<!-- MONTH PICKER DROPDOWN — body level so fixed positioning works correctly -->
+<div id="month-picker" style="display:none;position:fixed;top:64px;left:260px;z-index:99999;background:white;border:1px solid #e8e2d8;border-radius:12px;box-shadow:0 8px 40px rgba(13,27,42,0.18);padding:18px;width:290px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+    <div style="font-size:11px;font-weight:700;color:var(--text-mid);text-transform:uppercase;letter-spacing:.08em;">Select Month</div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <button onclick="changePickerYear(-1)" style="background:var(--cream);border:1px solid #ddd;border-radius:6px;padding:3px 10px;cursor:pointer;font-size:13px;font-family:DM Sans,sans-serif;color:var(--navy);">&#9664;</button>
+      <span id="picker-year" style="font-weight:700;font-size:14px;color:var(--navy);min-width:42px;text-align:center;">2026</span>
+      <button onclick="changePickerYear(1)" style="background:var(--cream);border:1px solid #ddd;border-radius:6px;padding:3px 10px;cursor:pointer;font-size:13px;font-family:DM Sans,sans-serif;color:var(--navy);">&#9654;</button>
+    </div>
+  </div>
+  <div id="month-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
+  <div style="margin-top:12px;padding-top:10px;border-top:1px solid #ede8df;display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-size:10px;color:var(--text-mute);">Showing data for selected month</span>
+    <button onclick="goToLatestMonth()" 
