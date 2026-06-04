@@ -213,7 +213,22 @@ tbody tr:hover td{background:#faf8f4;}
   <div class="topbar">
     <div class="topbar-left">
       <div class="page-title" id="topbar-title">Dashboard</div>
-      <div class="month-sel" onclick="cycleMonth()">📅 <span id="month-disp">June 2026</span> ▾</div>
+      <div class="month-sel" onclick="toggleMonthPicker()" id="month-sel-btn" style="position:relative;">📅 <span id="month-disp">June 2026</span> ▾</div>
+      <div id="month-picker" style="display:none;position:fixed;top:64px;left:280px;z-index:9999;background:white;border:1px solid #e8e2d8;border-radius:10px;box-shadow:0 8px 32px rgba(13,27,42,0.15);padding:16px;width:280px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text-mid);text-transform:uppercase;letter-spacing:.08em;">Select Month</div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button onclick="changePickerYear(-1)" style="background:var(--cream);border:1px solid #ddd;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:12px;font-family:DM Sans,sans-serif;">&#9664;</button>
+            <span id="picker-year" style="font-weight:700;font-size:13px;color:var(--navy);min-width:38px;text-align:center;">2026</span>
+            <button onclick="changePickerYear(1)" style="background:var(--cream);border:1px solid #ddd;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:12px;font-family:DM Sans,sans-serif;">&#9654;</button>
+          </div>
+        </div>
+        <div id="month-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;"></div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid #ede8df;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:10px;color:var(--text-mute);">Data filtered by selected month</span>
+          <button onclick="goToLatestMonth()" style="background:var(--navy);color:var(--gold);border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;">Latest</button>
+        </div>
+      </div>
     </div>
     <div class="topbar-right">
       <button class="btn-refresh" onclick="refreshAllData()">⟳ Refresh Data</button>
@@ -525,8 +540,8 @@ tbody tr:hover td{background:#faf8f4;}
 var API = 'https://script.google.com/macros/s/AKfycby9yeJWuT12n_fDaEAmu2F0FmcFZT6Nstjmc-sk1hUz4RBz7Sr043jjlJgIiBQsuFQZ/exec';
 
 var D = {
-  month:'June 2026', monthIdx:0,
-  months:['June 2026','May 2026','April 2026','March 2026'],
+  month:'June 2026', pickerYear:2026,
+  allMonths:['January','February','March','April','May','June','July','August','September','October','November','December'],
   kpis:{ft:0,nm:0,souls:0,icu:0,s2nd:0,bap:0,imm:0,mclass:0},
   att:{mem:[],wkr:[],lbl:[]},
   souls_w:[0,0,0,0],
@@ -566,7 +581,7 @@ var D = {
 };
 
 var SHEET_HEADERS = {
-  FirstTimers:   ['Name','Date','Said Yes','Stage','Membership Class','Follow-up Owner','Phone'],
+  FirstTimers:   ['Name','Date','Said Yes','Stage','Membership Class','Follow-up Owner','Phone','Month'],
   Members:       ['Name','Date Joined','Tribe','Status','Baptised','Discipleship','Affinity Group','Interest Group'],
   Attendance:    ['Date','Members Present','Workers Present','Total Attendance','Immerse Attendance'],
   IndAttendance: ['Name','Role','Services Attended','Total Services','Attendance %'],
@@ -664,7 +679,30 @@ function refreshAllData() {
     var metricRows = results[8];
 
     // First Timers
-    D.firstTimers = ftRows.map(function(r) {
+    // Filter all rows to selected month
+    var selMonth = D.month;
+    function matchesMonth(r, dateField) {
+      var d = r[dateField] || '';
+      if (!d) return true; // include if no date (summary rows)
+      var parts = d.split('-');
+      if (parts.length >= 2) {
+        var rowDate = new Date(parts[0], parseInt(parts[1])-1, 1);
+        var moIdx = D.allMonths.indexOf(selMonth.split(' ')[0]);
+        var yr = parseInt(selMonth.split(' ')[1]);
+        return rowDate.getFullYear() === yr && rowDate.getMonth() === moIdx;
+      }
+      return true;
+    }
+    // Filter rows by month where date is available
+    var ftFiltered = ftRows.filter(function(r) { return matchesMonth(r,'Date'); });
+    var memberFiltered = memberRows.filter(function(r) { return matchesMonth(r,'Date Joined'); });
+    var attFiltered = attRows.filter(function(r) { return matchesMonth(r,'Date'); });
+    var indAttFiltered = indAttRows; // keep all individual attendance
+    var tribeAttFiltered = tribeAttRows.filter(function(r) { return matchesMonth(r,'Meeting Date'); });
+    var soulsFiltered = soulsRows.filter(function(r) { return matchesMonth(r,'Service Date'); });
+    var evFiltered = evRows.filter(function(r) { return matchesMonth(r,'Date'); });
+
+    D.firstTimers = ftFiltered.map(function(r) {
       return { name:r['Name']||'', date:r['Date']||'', yes:r['Said Yes']||'Undecided', stage:r['Stage']||'First Timer', cls:r['Membership Class']||'Not yet', fu:r['Follow-up Owner']||'—' };
     });
     D.kpis.ft = D.firstTimers.length;
@@ -677,23 +715,23 @@ function refreshAllData() {
     D.funnel[4].n = D.firstTimers.filter(function(f) { return f.stage === 'New Member'; }).length;
 
     // Members
-    D.newMembers = memberRows.map(function(r) {
+    D.newMembers = memberFiltered.map(function(r) {
       return { name:r['Name']||'', joined:r['Date Joined']||'', tribe:r['Tribe']||'Unassigned', status:r['Status']||'Active', bap:r['Baptised']||'No', disc:r['Discipleship']||'No' };
     });
     D.kpis.nm = D.newMembers.filter(function(m) { return m.status === 'Active'; }).length;
     var affinityGroups = ['Students','Married','Ladies','Men'];
     affinityGroups.forEach(function(g, i) {
-      D.affinity[i].n = memberRows.filter(function(r) { return (r['Affinity Group']||'') === g; }).length;
+      D.affinity[i].n = memberFiltered.filter(function(r) { return (r['Affinity Group']||'') === g; }).length;
     });
     var interestGroups = ['Finance','Travel','Business','Career'];
     interestGroups.forEach(function(g, i) {
-      D.interest[i].n = memberRows.filter(function(r) { return (r['Interest Group']||'') === g; }).length;
+      D.interest[i].n = memberFiltered.filter(function(r) { return (r['Interest Group']||'') === g; }).length;
     });
 
     // Attendance
-    if (attRows.length > 0) {
+    if (attFiltered.length > 0) {
       var monthMap = {};
-      attRows.forEach(function(r) {
+      attFiltered.forEach(function(r) {
         var d = r['Date'] || '';
         if (!d) return;
         var mo = d.substring(0, 7);
@@ -713,13 +751,13 @@ function refreshAllData() {
     }
 
     // Individual Attendance
-    D.workers = indAttRows.filter(function(r) { return (r['Role']||'').includes('Worker'); }).map(function(r) { return {name:r['Name'], att:parseInt(r['Attendance %'])||0}; });
-    D.membersAtt = indAttRows.filter(function(r) { return (r['Role']||'').includes('Member'); }).map(function(r) { return {name:r['Name'], att:parseInt(r['Attendance %'])||0}; });
+    D.workers = indAttFiltered.filter(function(r) { return (r['Role']||'').includes('Worker'); }).map(function(r) { return {name:r['Name'], att:parseInt(r['Attendance %'])||0}; });
+    D.membersAtt = indAttFiltered.filter(function(r) { return (r['Role']||'').includes('Member'); }).map(function(r) { return {name:r['Name'], att:parseInt(r['Attendance %'])||0}; });
 
     // Tribe Attendance
-    if (tribeAttRows.length > 0) {
+    if (tribeAttFiltered.length > 0) {
       D.tribes.forEach(function(t) {
-        var matching = tribeAttRows.filter(function(r) {
+        var matching = tribeAttFiltered.filter(function(r) {
           return (r['Tribe Name']||'').toLowerCase().includes(t.name.toLowerCase().replace('tribe ','').trim());
         });
         if (matching.length > 0) {
@@ -732,9 +770,9 @@ function refreshAllData() {
     }
 
     // Souls Saved
-    if (soulsRows.length > 0) {
+    if (soulsFiltered.length > 0) {
       D.souls_w = [0,0,0,0];
-      soulsRows.forEach(function(r) {
+      soulsFiltered.forEach(function(r) {
         var wk = r['Week'] || '';
         var idx = ['Week 1','Week 2','Week 3','Week 4'].indexOf(wk);
         if (idx >= 0) D.souls_w[idx] += parseInt(r['Souls Saved']) || 0;
@@ -743,7 +781,7 @@ function refreshAllData() {
     }
 
     // Events
-    D.events = evRows.map(function(r) { return {name:r['Event Name'], week:r['Week'], type:r['Event Type'], att:r['Attendance']}; });
+    D.events = evFiltered.map(function(r) { return {name:r['Event Name'], week:r['Week'], type:r['Event Type'], att:r['Attendance']}; });
 
     // Training
     if (trnRows.length > 0) {
@@ -761,7 +799,7 @@ function refreshAllData() {
     }
 
     setSyncStatus('synced', 'Up to date');
-    toast('Data refreshed from Google Sheets');
+    toast('Data refreshed for ' + D.month);
     renderDashboard();
   })
   .catch(function(err) {
@@ -796,13 +834,69 @@ function showView(id) {
   if (id === 'bulk-upload') buildUploadHub();
 }
 
-function cycleMonth() {
-  D.monthIdx = (D.monthIdx + 1) % D.months.length;
-  D.month = D.months[D.monthIdx];
+// ── MONTH PICKER ──
+function toggleMonthPicker() {
+  var p = document.getElementById('month-picker');
+  if (p.style.display === 'none') {
+    buildMonthGrid();
+    p.style.display = 'block';
+    // close on outside click
+    setTimeout(function() {
+      document.addEventListener('click', closePickerOutside, {once:true});
+    }, 10);
+  } else {
+    p.style.display = 'none';
+  }
+}
+function closePickerOutside(e) {
+  var p = document.getElementById('month-picker');
+  var btn = document.getElementById('month-sel-btn');
+  if (!p.contains(e.target) && !btn.contains(e.target)) {
+    p.style.display = 'none';
+  }
+}
+function buildMonthGrid() {
+  document.getElementById('picker-year').textContent = D.pickerYear;
+  var grid = document.getElementById('month-grid');
+  grid.innerHTML = '';
+  var currentParts = D.month.split(' ');
+  var currentMo = currentParts[0];
+  var currentYr = currentParts[1];
+  D.allMonths.forEach(function(mo) {
+    var btn = document.createElement('button');
+    var isActive = (mo === currentMo && String(D.pickerYear) === currentYr);
+    btn.textContent = mo.substring(0,3);
+    btn.style.cssText = 'padding:7px 4px;border-radius:6px;font-size:11.5px;font-weight:' + (isActive?'700':'500') + ';cursor:pointer;border:1px solid ' + (isActive?'var(--gold)':'#ede8df') + ';background:' + (isActive?'var(--navy)':'white') + ';color:' + (isActive?'var(--gold)':'var(--text-mid)') + ';font-family:DM Sans,sans-serif;transition:all .15s;';
+    btn.onmouseover = function() { if(!isActive) { this.style.background='var(--cream)'; this.style.borderColor='var(--gold)'; } };
+    btn.onmouseout  = function() { if(!isActive) { this.style.background='white'; this.style.borderColor='#ede8df'; } };
+    btn.onclick = function(e) {
+      e.stopPropagation();
+      selectMonth(mo, D.pickerYear);
+    };
+    grid.appendChild(btn);
+  });
+}
+function changePickerYear(delta) {
+  D.pickerYear = Math.max(2025, Math.min(2030, D.pickerYear + delta));
+  buildMonthGrid();
+}
+function selectMonth(mo, yr) {
+  D.month = mo + ' ' + yr;
   document.getElementById('month-disp').textContent = D.month;
   var el = document.getElementById('ins-month');
   if (el) el.textContent = D.month;
+  document.getElementById('month-picker').style.display = 'none';
+  // Refresh data filtered to this month
+  refreshAllData();
 }
+function goToLatestMonth() {
+  var now = new Date();
+  var mo = D.allMonths[now.getMonth()];
+  var yr = now.getFullYear();
+  D.pickerYear = yr;
+  selectMonth(mo, yr);
+}
+function cycleMonth() { toggleMonthPicker(); }
 
 function renderDashboard() {
   document.getElementById('k-ft').textContent = D.kpis.ft;
@@ -1020,7 +1114,7 @@ function saveFirstTimer() {
   var name = document.getElementById('ft-name').value.trim();
   if (!name) { toast('Please enter a name'); return; }
   setBtnLoading('btn-save-ft', true);
-  var row = [name, document.getElementById('ft-date').value || new Date().toISOString().split('T')[0], document.getElementById('ft-yes').value || 'Undecided', document.getElementById('ft-stage').value || 'First Timer', 'Not yet', document.getElementById('ft-owner').value || '—', document.getElementById('ft-phone').value || ''];
+  var row = [name, document.getElementById('ft-date').value || new Date().toISOString().split('T')[0], document.getElementById('ft-yes').value || 'Undecided', document.getElementById('ft-stage').value || 'First Timer', 'Not yet', document.getElementById('ft-owner').value || '—', document.getElementById('ft-phone').value || '', D.month];
   writeToSheet('FirstTimers', [row]).then(function(ok) {
     if (ok) { D.firstTimers.push({name:name,date:row[1],yes:row[2],stage:row[3],cls:row[4],fu:row[5]}); D.kpis.ft++; document.getElementById('ft-name').value = ''; renderDashboard(); toast('First timer saved to Google Sheets'); }
     setBtnLoading('btn-save-ft', false);
