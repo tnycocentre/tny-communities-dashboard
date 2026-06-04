@@ -354,7 +354,7 @@ tbody tr:hover td{background:#faf8f4;}
           <div class="form-row"><label class="form-lbl">Full Name</label><input class="form-inp" id="m-name" placeholder="Member full name"></div>
           <div class="form-row"><label class="form-lbl">Date Joined</label><input class="form-inp" type="date" id="m-joined"></div>
           <div class="form-row"><label class="form-lbl">Tribe</label>
-            <select class="form-sel" id="m-tribe"><option value="">Select Tribe</option><option>Tribe Alpha</option><option>Tribe Beta</option><option>Tribe Gamma</option><option>Tribe Delta</option><option>Tribe Epsilon</option><option>Tribe Zeta</option></select></div>
+            <select class="form-sel" id="m-tribe"><option value="">Select Tribe</option><option>Central</option><option>Yaba 1</option><option>Yaba 2</option><option>Surulere</option><option>Campus</option></select></div>
           <div class="form-row"><label class="form-lbl">Status</label>
             <select class="form-sel" id="m-status"><option>Active</option><option>ICU</option><option>Inactive</option><option>Transferred</option></select></div>
           <div class="form-2col">
@@ -553,12 +553,11 @@ var D = {
   workers:[],
   membersAtt:[],
   tribes:[
-    {name:'Tribe Alpha',mem:0,att:0,growth:0,status:'Stable'},
-    {name:'Tribe Beta',mem:0,att:0,growth:0,status:'Stable'},
-    {name:'Tribe Gamma',mem:0,att:0,growth:0,status:'Stable'},
-    {name:'Tribe Delta',mem:0,att:0,growth:0,status:'Stable'},
-    {name:'Tribe Epsilon',mem:0,att:0,growth:0,status:'Stable'},
-    {name:'Tribe Zeta',mem:0,att:0,growth:0,status:'Stable'}
+    {name:'Central',mem:0,att:0,growth:0,status:'Stable'},
+    {name:'Yaba 1',mem:0,att:0,growth:0,status:'Stable'},
+    {name:'Yaba 2',mem:0,att:0,growth:0,status:'Stable'},
+    {name:'Surulere',mem:0,att:0,growth:0,status:'Stable'},
+    {name:'Campus',mem:0,att:0,growth:0,status:'Stable'}
   ],
   newMembers:[],
   firstTimers:[],
@@ -1038,7 +1037,7 @@ function renderTribeReport() {
   var max = Math.max.apply(null, D.tribes.map(function(t) { return t.mem; }).concat([1]));
   document.getElementById('tribe-chart').innerHTML = D.tribes.map(function(t) {
     var c = t.growth > 0 ? 'var(--green)' : t.growth < 0 ? 'var(--red)' : 'var(--gold)';
-    return '<div class="bar-wrap"><div class="bar" style="background:' + c + ';height:' + (t.mem/max*100) + '%;width:100%;"><div class="bar-tip">' + t.mem + ' members</div></div><div class="bar-lbl" style="font-size:9px;">' + t.name.split(' ')[1] + '</div></div>';
+    return '<div class="bar-wrap"><div class="bar" style="background:' + c + ';height:' + (t.mem/max*100) + '%;width:100%;"><div class="bar-tip">' + t.mem + ' members</div></div><div class="bar-lbl" style="font-size:9px;">' + t.name.length > 8 ? t.name.substring(0,8) : t.name + '</div></div>';
   }).join('');
   document.getElementById('tribe-tbody').innerHTML = D.tribes.map(function(t) {
     var sc = t.status === 'Growing' ? 'active' : t.status === 'ICU Watch' ? 'pending' : 'inactive';
@@ -1267,10 +1266,10 @@ var UPLOAD_CARDS = [
 
 var UPLOAD_TEMPLATES = {
   ft:{headers:['Name','Date','Said Yes (Yes/No/Undecided)','Stage','Follow-up Owner','Phone'],sample:[['Tolu Adeyemi','2026-06-01','Yes','First Timer','Seun','08012345678']]},
-  members:{headers:['Name','Date Joined','Tribe','Status','Baptised (Yes/No)','Discipleship (Yes/No/In Progress)','Affinity Group','Interest Group'],sample:[['Chidinma Okafor','2026-06-01','Tribe Alpha','Active','Yes','In Progress','Ladies','Finance']]},
+  members:{headers:['Name','Date Joined','Tribe','Status','Baptised (Yes/No)','Discipleship (Yes/No/In Progress)','Affinity Group','Interest Group'],sample:[['Chidinma Okafor','2026-06-01','Central','Active','Yes','In Progress','Ladies','Finance']]},
   attendance:{headers:['Date','Members Present','Workers Present','Total Attendance','Immerse Attendance'],sample:[['2026-06-01','170','44','214','58']]},
   indatt:{headers:['Name','Role (Worker/Member)','Services Attended','Total Services This Month'],sample:[['Tolu Adeyemi','Worker','4','4']]},
-  tribe:{headers:['Tribe Name','Meeting Date','Members Present','Total Members'],sample:[['Tribe Alpha','2026-06-07','34','42']]},
+  tribe:{headers:['Tribe Name','Meeting Date','Members Present','Total Members'],sample:[['Central','2026-06-07','34','42']]},
   souls:{headers:['Week (Week 1-4)','Souls Saved','Joined Discipleship Class','Service Date'],sample:[['Week 1','3','2','2026-06-01']]},
   training:{headers:['Training Name','Member Name','Status (Enrolled/Active/Completed)','Start Date'],sample:[['Leadership Foundations','Tolu Adeyemi','Completed','2026-03-01']]},
   events:{headers:['Event Name','Week (Week 1-4)','Event Type','Attendance','Date'],sample:[['Community Dinner','Week 1','Social','45','2026-06-04']]}
@@ -1376,4 +1375,4 @@ setTimeout(function() {
   <div id="month-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
   <div style="margin-top:12px;padding-top:10px;border-top:1px solid #ede8df;display:flex;justify-content:space-between;align-items:center;">
     <span style="font-size:10px;color:var(--text-mute);">Showing data for selected month</span>
-    <button onclick="goToLatestMonth()" 
+    <button onclick="goToLatestMonth()" style="background:var(--navy);color:var(--gold);border:none;border-radius:6px;padding:5px 12px;font-size:11px;fon
