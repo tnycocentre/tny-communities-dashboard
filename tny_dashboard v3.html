@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TNY Community Intelligence Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d1b2a;--navy-mid:#162033;--navy-light:#1e2f47;
+  --gold:#c9a84c;--gold-light:#e8c96a;--gold-pale:rgba(201,168,76,0.12);
+  --cream:#f5f0e8;--text:#0d1b2a;--text-mid:#3a4a5c;--text-mute:#7a8a9c;
+  --green:#2d7d5f;--green-light:#e6f4ef;
+  --red:#c0392b;--red-light:#fdecea;
+  --blue:#1a5f8a;--blue-light:#e6f1f8;
+  --orange:#d4672a;--orange-light:#fdf0e8;
+  --border:rgba(201,168,76,0.2);
+  --shadow:0 4px 24px rgba(13,27,42,0.08);
+  --shadow-lg:0 12px 48px rgba(13,27,42,0.14);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#ede8df;color:var(--text);min-height:100vh;overflow-x:hidden;}
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:232px;min-width:232px;background:var(--navy);display:flex;flex-direction:column;z-index:10;}
+.sidebar-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(201,168,76,0.15);}
+.brand{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold);}
+.brand-sub{font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:.14em;text-transform:uppercase;margin-top:2px;}
+.sync-status{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:10px;color:rgba(255,255,255,0.35);}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;}
+.sync-dot.synced{background:#2d7d5f;} .sync-dot.syncing{background:var(--gold);animation:pulse 1s infinite;}
+.sync-dot.error{background:var(--red);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto;}
+.nav-label{font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:14px 12px 5px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:7px;color:rgba(255,255,255,0.5);font-size:12.5px;cursor:pointer;transition:all .18s;margin-bottom:1px;}
+.nav-item:hover{background:rgba(201,168,76,0.08);color:rgba(255,255,255,0.85);}
+.nav-item.active{background:var(--gold-pale);color:var(--gold);font-weight:500;}
+.nav-item .ico{font-size:14px;width:18px;text-align:center;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{background:white;border-bottom:1px solid #e8e2d8;padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.page-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;}
+.month-sel{display:flex;align-items:center;gap:6px;background:var(--cream);border:1px solid var(--border);border-radius:7px;padding:5px 12px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text-mid);}
+.topbar-right{display:flex;align-items:center;gap:9px;}
+.btn-primary{background:var(--gold);color:var(--navy);border:none;border-radius:7px;padding:7px 16px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;display:flex;align-items:center;gap:5px;}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-1px);}
+.btn-sec{background:transparent;color:var(--text-mid);border:1px solid #ddd;border-radius:7px;padding:7px 14px;font-size:12.5px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;}
+.btn-sec:hover{border-color:var(--gold);color:var(--gold);}
+.btn-refresh{background:var(--navy);color:var(--gold);border:none;border-radius:7px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;display:flex;align-items:center;gap:5px;}
+.btn-refresh:hover{background:var(--navy-light);}
+.content{flex:1;overflow-y:auto;padding:22px 28px;}
+.view{display:none;} .view.active{display:block;}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi-card{background:white;border-radius:11px;padding:18px;border:1px solid #ede8df;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s;}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.ck-gold::before{background:var(--gold);} .ck-green::before{background:var(--green);}
+.ck-blue::before{background:var(--blue);} .ck-orange::before{background:var(--orange);}
+.ck-red::before{background:var(--red);}
+.kpi-label{font-size:10px;font-weight:600;color:var(--text-mute);text-transform:uppercase;letter-spacing:.08em;}
+.kpi-val{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;margin:5px 0 3px;}
+.kpi-delta{font-size:11px;} .kpi-delta.up{color:var(--green);} .kpi-delta.dn{color:var(--red);}
+.kpi-ico{position:absolute;right:14px;top:14px;font-size:26px;opacity:.1;}
+
+/* SECTIONS */
+.sec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;margin-top:24px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;}
+.sec-sub{font-size:11px;color:var(--text-mute);margin-top:2px;}
+
+/* CHARTS */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.chart-card{background:white;border-radius:11px;padding:20px;border:1px solid #ede8df;box-shadow:var(--shadow);}
+.chart-title{font-size:12px;font-weight:600;color:var(--text-mid);margin-bottom:14px;}
+.chart-area{height:150px;display:flex;align-items:flex-end;gap:6px;}
+.bar-wrap{display:flex;flex-direction:column;align-items:center;flex:1;height:100%;justify-content:flex-end;gap:3px;}
+.bar{width:100%;border-radius:3px 3px 0 0;transition:all .4s;cursor:pointer;position:relative;}
+.bar:hover{filter:brightness(1.1);}
+.bar-tip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--navy);color:white;font-size:10px;padding:2px 7px;border-radius:3px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;margin-bottom:3px;}
+.bar:hover .bar-tip{opacity:1;}
+.bar-lbl{font-size:9px;color:var(--text-mute);}
+.prog-bar{height:5px;background:#f0ece4;border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width .6s;}
+.donut-wrap{display:flex;align-items:center;gap:16px;}
+.donut-svg{width:110px;height:110px;flex-shrink:0;}
+.donut-leg{display:flex;flex-direction:column;gap:7px;flex:1;}
+.donut-item{display:flex;align-items:center;gap:7px;font-size:11px;}
+.donut-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.donut-pct{margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-mute);}
+.funnel-item{margin-bottom:7px;}
+.funnel-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;}
+.chart-legend{display:flex;gap:14px;margin-top:8px;}
+.legend-item{font-size:10px;display:flex;align-items:center;gap:4px;}
+.legend-dot{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+/* TABLES */
+.table-card{background:white;border-radius:11px;border:1px solid #ede8df;box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;}
+table{width:100%;border-collapse:collapse;}
+thead th{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-mute);padding:9px 18px;text-align:left;background:#faf8f4;border-bottom:1px solid #ede8df;}
+tbody td{font-size:12px;padding:10px 18px;border-bottom:1px solid #f5f0e8;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:#faf8f4;}
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:600;}
+.badge.active{background:var(--green-light);color:var(--green);}
+.badge.pending{background:var(--orange-light);color:var(--orange);}
+.badge.inactive{background:#f0f0f0;color:#888;}
+.badge.b-gold{background:var(--gold-pale);color:#8a6a1a;}
+.badge.b-blue{background:var(--blue-light);color:var(--blue);}
+.att-row{display:flex;flex-direction:column;gap:7px;}
+.att-item{display:flex;align-items:center;gap:10px;font-size:11.5px;}
+.att-name{width:130px;color:var(--text-mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.att-bar-wrap{flex:1;}
+.att-pct{width:38px;text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-mute);}
+.tribe-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.tribe-card{background:white;border-radius:11px;padding:16px;border:1px solid #ede8df;box-shadow:var(--shadow);}
+.tribe-name{font-weight:600;font-size:13px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+.tribe-stat{display:flex;justify-content:space-between;font-size:11px;color:var(--text-mute);margin-bottom:5px;}
+.tribe-stat span:last-child{font-weight:600;color:var(--text);}
+
+/* FORMS */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.form-sec{background:white;border-radius:11px;padding:22px;border:1px solid #ede8df;box-shadow:var(--shadow);}
+.form-sec-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;margin-bottom:14px;padding-bottom:11px;border-bottom:1px solid #ede8df;display:flex;align-items:center;gap:7px;}
+.form-row{margin-bottom:12px;}
+.form-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-mute);margin-bottom:4px;display:block;}
+.form-inp,.form-sel{width:100%;border:1px solid #ddd;border-radius:7px;padding:8px 11px;font-size:12.5px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s;background:white;color:var(--text);}
+.form-inp:focus,.form-sel:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-pale);}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.form-submit{width:100%;padding:11px;background:var(--navy);color:var(--gold);border:none;border-radius:7px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:6px;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.form-submit:hover{background:var(--navy-light);transform:translateY(-1px);}
+.form-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.form-note{background:var(--cream);border-radius:7px;padding:11px 13px;font-size:12px;color:var(--text-mid);margin-top:10px;line-height:1.6;}
+.divider{height:1px;background:#ede8df;margin:14px 0;}
+.srch-inp{border:1px solid #ede8df;border-radius:6px;padding:5px 11px;font-size:11.5px;font-family:'DM Sans',sans-serif;outline:none;width:170px;}
+.srch-inp:focus{border-color:var(--gold);}
+.tab-row{display:flex;gap:3px;margin-bottom:16px;background:white;border-radius:9px;padding:3px;border:1px solid #ede8df;width:fit-content;}
+.tab-btn{padding:6px 14px;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-mute);font-family:'DM Sans',sans-serif;transition:all .18s;}
+.tab-btn.active{background:var(--navy);color:var(--gold);}
+.tab-btn:hover:not(.active){background:#f5f0e8;}
+
+/* INSIGHTS */
+.ins-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;}
+.ins-card{background:white;border-radius:11px;padding:18px;border:1px solid #ede8df;box-shadow:var(--shadow);border-left:4px solid transparent;}
+.ins-card.pos{border-left-color:var(--green);} .ins-card.warn{border-left-color:var(--orange);}
+.ins-card.neu{border-left-color:var(--blue);} .ins-card.alert{border-left-color:var(--red);}
+.ins-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.ins-tag.pos{color:var(--green);} .ins-tag.warn{color:var(--orange);} .ins-tag.neu{color:var(--blue);} .ins-tag.alert{color:var(--red);}
+.ins-title{font-weight:600;font-size:13px;margin-bottom:5px;}
+.ins-text{font-size:12px;line-height:1.65;color:var(--text-mid);}
+.action-item{background:white;border-radius:9px;padding:12px 16px;font-size:12px;border:1px solid #ede8df;box-shadow:var(--shadow);display:flex;gap:9px;align-items:flex-start;margin-bottom:8px;}
+
+/* BULK UPLOAD */
+.upload-hub-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);border-radius:12px;padding:24px 28px;margin-bottom:22px;display:flex;align-items:flex-start;gap:20px;}
+.upload-hub-icon{font-size:38px;margin-top:2px;}
+.upload-hub-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:white;}
+.upload-hub-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;line-height:1.55;}
+.upload-hub-steps{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+.step-pill{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:4px 12px;font-size:10.5px;color:var(--gold);display:flex;align-items:center;gap:5px;}
+.step-num{background:var(--gold);color:var(--navy);width:16px;height:16px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.upload-hub{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.upload-card{background:white;border-radius:11px;padding:22px;border:1px solid #ede8df;box-shadow:var(--shadow);}
+.upload-card-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;margin-bottom:5px;}
+.upload-card-sub{font-size:11px;color:var(--text-mute);margin-bottom:14px;line-height:1.5;}
+.drop-zone{border:2px dashed #ddd;border-radius:9px;padding:22px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:#fafaf8;}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--gold);background:var(--gold-pale);}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.drop-icon{font-size:26px;margin-bottom:6px;}
+.drop-text{font-size:12.5px;font-weight:600;color:var(--text-mid);}
+.drop-hint{font-size:10.5px;color:var(--text-mute);margin-top:2px;}
+.upload-actions{display:flex;gap:8px;margin-top:12px;}
+.btn-template{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px;border:1px solid var(--border);border-radius:7px;font-size:11.5px;font-weight:600;color:var(--navy);cursor:pointer;background:var(--gold-pale);font-family:'DM Sans',sans-serif;transition:all .18s;}
+.btn-template:hover{background:var(--gold);}
+.btn-confirm{flex:1;padding:8px;background:var(--navy);color:var(--gold);border:none;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.btn-confirm:hover{background:var(--navy-light);}
+.btn-confirm:disabled{opacity:.4;cursor:not-allowed;}
+.upload-preview{margin-top:12px;display:none;}
+.preview-banner{display:flex;align-items:center;gap:10px;background:var(--green-light);border:1px solid #a8d5c2;border-radius:8px;padding:10px 14px;margin-bottom:8px;}
+.preview-banner.error{background:var(--red-light);border-color:#f5b8b3;}
+.preview-badge{font-size:16px;}
+.preview-title{font-size:12px;font-weight:600;}
+.preview-sub{font-size:10px;color:var(--text-mute);}
+.preview-table-wrap{max-height:140px;overflow-y:auto;border:1px solid #ede8df;border-radius:7px;}
+.preview-table{width:100%;border-collapse:collapse;font-size:11px;}
+.preview-table th{background:#f5f0e8;padding:5px 9px;text-align:left;font-weight:600;color:var(--text-mute);border-bottom:1px solid #ede8df;white-space:nowrap;}
+.preview-table td{padding:4px 9px;border-bottom:1px solid #f5f0e8;color:var(--text-mid);}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;z-index:9999;background:var(--navy);color:white;border-left:3px solid var(--gold);padding:12px 18px;border-radius:9px;box-shadow:var(--shadow-lg);font-size:12.5px;font-weight:500;transform:translateY(80px);opacity:0;transition:all .3s ease;max-width:320px;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* LOADING OVERLAY */
+.loading-overlay{position:fixed;inset:0;background:rgba(13,27,42,0.6);z-index:8888;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.loading-overlay.show{opacity:1;pointer-events:all;}
+.loading-box{background:white;border-radius:14px;padding:32px 40px;text-align:center;box-shadow:var(--shadow-lg);}
+.loading-spinner{width:36px;height:36px;border:3px solid #f0ece4;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:14px;font-weight:600;color:var(--text-mid);}
+.loading-sub{font-size:11px;color:var(--text-mute);margin-top:4px;}
+
+::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">TNY</div>
+    <div class="brand-sub">Community Intelligence</div>
+    <div class="sync-status">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-label">Connecting…</span>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Overview</div>
+    <div class="nav-item active" onclick="showView('dashboard')"><span class="ico">⬛</span>Dashboard</div>
+    <div class="nav-item" onclick="showView('insights')"><span class="ico">💡</span>AI Insights</div>
+
+    <div class="nav-label">Data Entry</div>
+    <div class="nav-item" onclick="showView('bulk-upload')"><span class="ico">📤</span>Bulk Upload</div>
+    <div class="nav-item" onclick="showView('entry-ft')"><span class="ico">🙋</span>First Timers</div>
+    <div class="nav-item" onclick="showView('entry-members')"><span class="ico">👥</span>Members & Tribes</div>
+    <div class="nav-item" onclick="showView('entry-attendance')"><span class="ico">📋</span>Attendance</div>
+    <div class="nav-item" onclick="showView('entry-growth')"><span class="ico">🌱</span>Growth & Discipleship</div>
+    <div class="nav-item" onclick="showView('entry-training')"><span class="ico">🎓</span>Training & Events</div>
+
+    <div class="nav-label">Reports</div>
+    <div class="nav-item" onclick="showView('report-tribes')"><span class="ico">🏘</span>Tribe Reports</div>
+    <div class="nav-item" onclick="showView('report-members')"><span class="ico">📊</span>Member Directory</div>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title" id="topbar-title">Dashboard</div>
+      <div class="month-sel" onclick="cycleMonth()">📅 <span id="month-disp">June 2026</span> ▾</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-refresh" onclick="refreshAllData()">⟳ Refresh Data</button>
+      <button class="btn-sec" onclick="showView('bulk-upload')">📤 Bulk Upload</button>
+      <button class="btn-primary" onclick="showView('insights')">✦ Insights</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="view active" id="view-dashboard">
+      <div class="kpi-grid">
+        <div class="kpi-card ck-gold"><div class="kpi-ico">🙋</div><div class="kpi-label">First Timers (Month)</div><div class="kpi-val" id="k-ft">—</div><div class="kpi-delta up" id="kd-ft"></div></div>
+        <div class="kpi-card ck-green"><div class="kpi-ico">👥</div><div class="kpi-label">New Members (Month)</div><div class="kpi-val" id="k-nm">—</div><div class="kpi-delta up" id="kd-nm"></div></div>
+        <div class="kpi-card ck-blue"><div class="kpi-ico">✝️</div><div class="kpi-label">Souls Saved (Month)</div><div class="kpi-val" id="k-souls">—</div><div class="kpi-delta up" id="kd-souls"></div></div>
+        <div class="kpi-card ck-orange"><div class="kpi-ico">🔁</div><div class="kpi-label">ICU Turned Around</div><div class="kpi-val" id="k-icu">—</div><div class="kpi-delta up" id="kd-icu"></div></div>
+        <div class="kpi-card ck-blue"><div class="kpi-ico">🔄</div><div class="kpi-label">Second Timers</div><div class="kpi-val" id="k-2nd">—</div><div class="kpi-delta up"></div></div>
+        <div class="kpi-card ck-gold"><div class="kpi-ico">💧</div><div class="kpi-label">Baptisms</div><div class="kpi-val" id="k-bap">—</div><div class="kpi-delta up"></div></div>
+        <div class="kpi-card ck-green"><div class="kpi-ico">🌙</div><div class="kpi-label">Immerse Attendance</div><div class="kpi-val" id="k-imm">—</div><div class="kpi-delta up"></div></div>
+        <div class="kpi-card ck-red"><div class="kpi-ico">📚</div><div class="kpi-label">In Membership Class</div><div class="kpi-val" id="k-mclass">—</div><div class="kpi-delta up"></div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Monthly Attendance Trend — Members vs Workers</div>
+          <div class="chart-area" id="att-chart"></div>
+          <div class="chart-legend"><div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Members</div><div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Workers</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">First Timer Conversion Funnel</div>
+          <div id="funnel"></div>
+        </div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Souls Saved — Weekly</div>
+          <div class="chart-area" id="souls-chart"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Affinity & Interest Groups</div>
+          <div class="donut-wrap" id="groups-donut"></div>
+        </div>
+      </div>
+      <div class="sec-hdr">
+        <div><div class="sec-title">Attendance Rates</div><div class="sec-sub">This month's participation</div></div>
+        <div class="tab-row">
+          <div class="tab-btn active" onclick="switchAttTab(this,'workers')">Workers/Leaders</div>
+          <div class="tab-btn" onclick="switchAttTab(this,'members')">Members</div>
+        </div>
+      </div>
+      <div class="chart-card" style="margin-bottom:20px;"><div class="att-row" id="att-list"></div></div>
+      <div class="sec-hdr"><div><div class="sec-title">Tribe Performance</div></div></div>
+      <div class="tribe-grid" id="tribe-grid"></div>
+      <div class="sec-hdr">
+        <div><div class="sec-title">New Members — Tribe Status</div></div>
+        <input class="srch-inp" placeholder="🔍 Search..." id="m-search" oninput="filterMembers()">
+      </div>
+      <div class="table-card">
+        <table><thead><tr><th>Name</th><th>Joined</th><th>Tribe</th><th>Status</th><th>Baptised</th><th>Discipleship</th></tr></thead>
+        <tbody id="m-tbody"></tbody></table>
+      </div>
+      <div class="sec-hdr"><div><div class="sec-title">First Timer Pipeline</div></div></div>
+      <div class="table-card" style="margin-bottom:30px;">
+        <table><thead><tr><th>Name</th><th>Date</th><th>Said Yes</th><th>Stage</th><th>Membership Class</th><th>Follow-up</th></tr></thead>
+        <tbody id="ft-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ══ AI INSIGHTS ══ -->
+    <div class="view" id="view-insights">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;">
+        <div style="width:38px;height:38px;background:var(--navy);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;">💡</div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:600;">Community Intelligence Report</div>
+          <div style="font-size:11px;color:var(--text-mute);">Auto-generated from your <span id="ins-month">June 2026</span> data</div>
+        </div>
+        <button class="btn-primary" style="margin-left:auto;" onclick="generateInsights()">⟳ Regenerate</button>
+      </div>
+      <div class="ins-grid" id="ins-grid"></div>
+      <div class="sec-hdr"><div class="sec-title">Recommended Actions This Week</div></div>
+      <div id="action-list" style="margin-bottom:30px;"></div>
+    </div>
+
+    <!-- ══ BULK UPLOAD ══ -->
+    <div class="view" id="view-bulk-upload">
+      <div class="upload-hub-header">
+        <div class="upload-hub-icon">📤</div>
+        <div style="flex:1;">
+          <div class="upload-hub-title">Bulk Data Upload</div>
+          <div class="upload-hub-sub">Download a template, fill it in Excel, upload it here. Data saves directly to Google Sheets and the dashboard updates for everyone instantly.</div>
+          <div class="upload-hub-steps">
+            <div class="step-pill"><div class="step-num">1</div>Download Template</div>
+            <div class="step-pill"><div class="step-num">2</div>Fill in Excel</div>
+            <div class="step-pill"><div class="step-num">3</div>Upload & Import</div>
+          </div>
+        </div>
+      </div>
+      <div class="upload-hub" id="upload-hub-grid"></div>
+    </div>
+
+    <!-- ══ ENTRY: FIRST TIMERS ══ -->
+    <div class="view" id="view-entry-ft">
+      <div class="sec-hdr"><div class="sec-title">First Timer Entry</div></div>
+      <div class="form-grid">
+        <div class="form-sec">
+          <div class="form-sec-title">🙋 Log a First Timer</div>
+          <div class="form-row"><label class="form-lbl">Full Name</label><input class="form-inp" id="ft-name" placeholder="e.g. Tolu Adeyemi"></div>
+          <div class="form-row"><label class="form-lbl">Date of Visit</label><input class="form-inp" type="date" id="ft-date"></div>
+          <div class="form-row"><label class="form-lbl">Said Yes to Church?</label>
+            <select class="form-sel" id="ft-yes"><option value="">— Select —</option><option>Yes</option><option>No</option><option>Undecided</option></select></div>
+          <div class="form-row"><label class="form-lbl">Current Stage</label>
+            <select class="form-sel" id="ft-stage"><option value="">— Select —</option><option>First Timer</option><option>Second Timer</option><option>Membership Class</option><option>New Member</option></select></div>
+          <div class="form-row"><label class="form-lbl">Follow-up Owner</label><input class="form-inp" id="ft-owner" placeholder="Tribe leader or volunteer"></div>
+          <div class="form-row"><label class="form-lbl">Phone Number</label><input class="form-inp" id="ft-phone" placeholder="0801..."></div>
+          <button class="form-submit" id="btn-save-ft" onclick="saveFirstTimer()">✓ Save to Google Sheets</button>
+        </div>
+        <div class="form-sec">
+          <div class="form-sec-title">📊 Monthly Summary Totals</div>
+          <div class="form-row"><label class="form-lbl">Total First Timers This Month</label><input class="form-inp" type="number" id="s-ft" placeholder="e.g. 42" oninput="previewKPIs()"></div>
+          <div class="form-row"><label class="form-lbl">First Timers — Said Yes</label><input class="form-inp" type="number" id="s-ft-yes" placeholder="e.g. 28" oninput="previewKPIs()"></div>
+          <div class="form-row"><label class="form-lbl">Second Timers This Month</label><input class="form-inp" type="number" id="s-2nd" placeholder="e.g. 15"></div>
+          <div class="form-row"><label class="form-lbl">FTs in Membership Class</label><input class="form-inp" type="number" id="s-ftclass" placeholder="e.g. 9"></div>
+          <div class="form-row"><label class="form-lbl">Month</label>
+            <select class="form-sel" id="s-month"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option selected>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>
+          <div class="form-note" id="ft-preview">Enter values above to see conversion rate preview.</div>
+          <button class="form-submit" id="btn-save-ftsummary" onclick="saveFTSummary()">✓ Save Summary to Sheets</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ENTRY: MEMBERS ══ -->
+    <div class="view" id="view-entry-members">
+      <div class="sec-hdr"><div class="sec-title">Member & Tribe Management</div></div>
+      <div class="form-grid">
+        <div class="form-sec">
+          <div class="form-sec-title">👤 Add / Update Member</div>
+          <div class="form-row"><label class="form-lbl">Full Name</label><input class="form-inp" id="m-name" placeholder="Member's full name"></div>
+          <div class="form-row"><label class="form-lbl">Date Joined</label><input class="form-inp" type="date" id="m-joined"></div>
+          <div class="form-row"><label class="form-lbl">Tribe</label>
+            <select class="form-sel" id="m-tribe"><option value="">— Select —</option><option>Tribe Alpha</option><option>Tribe Beta</option><option>Tribe Gamma</option><option>Tribe Delta</option><option>Tribe Epsilon</option><option>Tribe Zeta</option></select></div>
+          <div class="form-row"><label class="form-lbl">Status</label>
+            <select class="form-sel" id="m-status"><option>Active</option><option>ICU</option><option>Inactive</option><option>Transferred</option></select></div>
+          <div class="form-2col">
+            <div class="form-row"><label class="form-lbl">Baptised?</label><select class="form-sel" id="m-bap"><option>Yes</option><option>No</option></select></div>
+            <div class="form-row"><label class="form-lbl">Discipleship?</label><select class="form-sel" id="m-disc"><option>Yes</option><option>No</option><option>In Progress</option></select></div>
+          </div>
+          <div class="form-row"><label class="form-lbl">Affinity Group</label>
+            <select class="form-sel" id="m-affinity"><option value="">— None —</option><option>Students</option><option>Married</option><option>Ladies</option><option>Men</option></select></div>
+          <div class="form-row"><label class="form-lbl">Interest Group</label>
+            <select class="form-sel" id="m-interest"><option value="">— None —</option><option>Finance</option><option>Travel</option><option>Business</option><option>Career</option></select></div>
+          <button class="form-submit" id="btn-save-member" onclick="saveMember()">✓ Save to Google Sheets</button>
+        </div>
+        <div class="form-sec">
+          <div class="form-sec-title">📦 Monthly Member Metrics</div>
+          <div class="form-2col">
+            <div class="form-row"><label class="form-lbl">Baptisms Done</label><input class="form-inp" type="number" id="mm-bap" placeholder="0"></div>
+            <div class="form-row"><label class="form-lbl">ICU Turned Around</label><input class="form-inp" type="number" id="mm-icu" placeholder="0"></div>
+          </div>
+          <div class="form-2col">
+            <div class="form-row"><label class="form-lbl">Transferred Out</label><input class="form-inp" type="number" id="mm-trans" placeholder="0"></div>
+            <div class="form-row"><label class="form-lbl">Members Left</label><input class="form-inp" type="number" id="mm-left" placeholder="0"></div>
+          </div>
+          <div class="divider"></div>
+          <div class="form-sec-title" style="border:none;padding:0;margin-bottom:10px;font-size:13px;">📍 Relocation Tracker</div>
+          <div class="form-row"><label class="form-lbl">Moved Within Lagos</label><input class="form-inp" type="number" id="rel-lag" placeholder="0"></div>
+          <div class="form-row"><label class="form-lbl">Moved Out of Lagos</label><input class="form-inp" type="number" id="rel-out" placeholder="0"></div>
+          <div class="form-row"><label class="form-lbl">Relocated Out of Nigeria</label><input class="form-inp" type="number" id="rel-ng" placeholder="0"></div>
+          <div class="form-row"><label class="form-lbl">Month</label>
+            <select class="form-sel" id="mm-month"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option selected>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>
+          <button class="form-submit" id="btn-save-metrics" onclick="saveMemberMetrics()">✓ Save to Google Sheets</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ENTRY: ATTENDANCE ══ -->
+    <div class="view" id="view-entry-attendance">
+      <div class="sec-hdr"><div class="sec-title">Attendance Entry</div></div>
+      <div class="form-grid">
+        <div class="form-sec">
+          <div class="form-sec-title">📋 Sunday Service</div>
+          <div class="form-row"><label class="form-lbl">Service Date</label><input class="form-inp" type="date" id="sv-date"></div>
+          <div class="form-row"><label class="form-lbl">Members Present</label><input class="form-inp" type="number" id="sv-mem" placeholder="e.g. 180" oninput="previewAttTotal()"></div>
+          <div class="form-row"><label class="form-lbl">Workers Present</label><input class="form-inp" type="number" id="sv-wkr" placeholder="e.g. 45" oninput="previewAttTotal()"></div>
+          <div class="form-row"><label class="form-lbl">Total Attendance</label><input class="form-inp" type="number" id="sv-total" placeholder="Auto-calculated"></div>
+          <div class="form-note" id="att-preview">Auto-calculates from members + workers.</div>
+          <div class="divider"></div>
+          <div class="form-sec-title" style="border:none;padding:0;margin-bottom:10px;font-size:13px;">🌙 Friday Immerse</div>
+          <div class="form-row"><label class="form-lbl">Immerse Date</label><input class="form-inp" type="date" id="imm-date"></div>
+          <div class="form-row"><label class="form-lbl">Immerse Attendance</label><input class="form-inp" type="number" id="imm-cnt" placeholder="e.g. 61"></div>
+          <button class="form-submit" id="btn-save-att" onclick="saveAttendance()">✓ Save to Google Sheets</button>
+        </div>
+        <div class="form-sec">
+          <div class="form-sec-title">🏘 Tribe Attendance</div>
+          <div id="tribe-att-form"></div>
+          <div class="form-row" style="margin-top:10px;"><label class="form-lbl">Meeting Date</label><input class="form-inp" type="date" id="tribe-att-date"></div>
+          <button class="form-submit" id="btn-save-tribeatt" onclick="saveTribeAtt()">✓ Save Tribe Attendance</button>
+          <div class="divider"></div>
+          <div class="form-sec-title" style="border:none;padding:0;margin-bottom:10px;font-size:13px;">👤 Individual Attendance %</div>
+          <div class="form-row"><label class="form-lbl">Name</label><input class="form-inp" id="ind-name" placeholder="Worker or member name"></div>
+          <div class="form-row"><label class="form-lbl">Role</label><select class="form-sel" id="ind-role"><option>Worker/Leader</option><option>Member</option></select></div>
+          <div class="form-2col">
+            <div class="form-row"><label class="form-lbl">Services Attended</label><input class="form-inp" type="number" id="ind-att" placeholder="e.g. 3" oninput="previewIndAtt()"></div>
+            <div class="form-row"><label class="form-lbl">Total Services</label><input class="form-inp" type="number" id="ind-tot" placeholder="e.g. 4" oninput="previewIndAtt()"></div>
+          </div>
+          <div class="form-note" id="ind-preview">Enter both values to see attendance %.</div>
+          <button class="form-submit" id="btn-save-indatt" onclick="saveIndAtt()">✓ Save Individual Attendance</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ENTRY: GROWTH ══ -->
+    <div class="view" id="view-entry-growth">
+      <div class="sec-hdr"><div class="sec-title">Growth & Discipleship</div></div>
+      <div class="form-grid">
+        <div class="form-sec">
+          <div class="form-sec-title">✝️ Souls Saved</div>
+          <div class="form-row"><label class="form-lbl">Week</label>
+            <select class="form-sel" id="souls-wk"><option>Week 1</option><option>Week 2</option><option>Week 3</option><option>Week 4</option></select></div>
+          <div class="form-row"><label class="form-lbl">Souls Saved This Week</label><input class="form-inp" type="number" id="souls-cnt" placeholder="e.g. 3"></div>
+          <div class="form-row"><label class="form-lbl">Joined Discipleship Class</label><input class="form-inp" type="number" id="souls-disc" placeholder="e.g. 2"></div>
+          <button class="form-submit" id="btn-save-souls" onclick="saveSouls()">✓ Save to Google Sheets</button>
+        </div>
+        <div class="form-sec">
+          <div class="form-sec-title">📅 New Member / Guest Ratio</div>
+          <div class="form-row"><label class="form-lbl">New Members This Month</label><input class="form-inp" type="number" id="nm-mo" placeholder="e.g. 17" oninput="previewRatio()"></div>
+          <div class="form-row"><label class="form-lbl">Total Guests This Month</label><input class="form-inp" type="number" id="gs-mo" placeholder="e.g. 42" oninput="previewRatio()"></div>
+          <div class="form-row"><label class="form-lbl">New Members YTD</label><input class="form-inp" type="number" id="nm-ytd" placeholder="e.g. 84" oninput="previewRatio()"></div>
+          <div class="form-row"><label class="form-lbl">Total Guests YTD</label><input class="form-inp" type="number" id="gs-ytd" placeholder="e.g. 210" oninput="previewRatio()"></div>
+          <div class="form-note" id="ratio-preview">Enter values to see conversion ratios.</div>
+          <button class="form-submit" id="btn-save-ratio" onclick="saveRatio()">✓ Save to Google Sheets</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ENTRY: TRAINING ══ -->
+    <div class="view" id="view-entry-training">
+      <div class="sec-hdr"><div class="sec-title">Training & Community Events</div></div>
+      <div class="form-grid">
+        <div class="form-sec">
+          <div class="form-sec-title">🎓 Training Entry</div>
+          <div class="form-row"><label class="form-lbl">Training Name</label><input class="form-inp" id="trn-name" placeholder="e.g. Leadership Foundations"></div>
+          <div class="form-2col">
+            <div class="form-row"><label class="form-lbl">Members Enrolled</label><input class="form-inp" type="number" id="trn-enr" placeholder="e.g. 20" oninput="previewTraining()"></div>
+            <div class="form-row"><label class="form-lbl">Active Participants</label><input class="form-inp" type="number" id="trn-act" placeholder="e.g. 16"></div>
+          </div>
+          <div class="form-2col">
+            <div class="form-row"><label class="form-lbl">Completed</label><input class="form-inp" type="number" id="trn-done" placeholder="e.g. 4"></div>
+            <div class="form-row"><label class="form-lbl">Total Membership</label><input class="form-inp" type="number" id="trn-memtot" placeholder="e.g. 260" oninput="previewTraining()"></div>
+          </div>
+          <div class="form-note" id="trn-preview">Enter enrolled & total to see % trained.</div>
+          <button class="form-submit" id="btn-save-trn" onclick="saveTraining()">✓ Save to Google Sheets</button>
+        </div>
+        <div class="form-sec">
+          <div class="form-sec-title">🎉 Community Events</div>
+          <div class="form-row"><label class="form-lbl">Event Name</label><input class="form-inp" id="ev-name" placeholder="e.g. Community Dinner"></div>
+          <div class="form-2col">
+            <div class="form-row"><label class="form-lbl">Week</label><select class="form-sel" id="ev-wk"><option>Week 1</option><option>Week 2</option><option>Week 3</option><option>Week 4</option></select></div>
+            <div class="form-row"><label class="form-lbl">Attendance</label><input class="form-inp" type="number" id="ev-att" placeholder="e.g. 45"></div>
+          </div>
+          <div class="form-row"><label class="form-lbl">Event Type</label>
+            <select class="form-sel" id="ev-type"><option>Social</option><option>Outreach</option><option>Training</option><option>Worship</option><option>Service Project</option></select></div>
+          <button class="form-submit" id="btn-save-ev" onclick="addEvent()">✓ Save Event to Sheets</button>
+          <div class="divider"></div>
+          <div style="font-size:11px;font-weight:600;color:var(--text-mute);margin-bottom:7px;">EVENTS LOGGED</div>
+          <div id="ev-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TRIBE REPORTS ══ -->
+    <div class="view" id="view-report-tribes">
+      <div class="sec-hdr"><div class="sec-title">Tribe Performance Report</div></div>
+      <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);" id="tribe-kpis"></div>
+      <div class="sec-hdr"><div class="sec-title">Month-on-Month Tribe Attendance</div></div>
+      <div class="chart-card" style="margin-bottom:20px;"><div class="chart-area" id="tribe-chart"></div></div>
+      <div class="sec-hdr"><div class="sec-title">Tribe Comparison</div></div>
+      <div class="table-card">
+        <table><thead><tr><th>Tribe</th><th>Members</th><th>Avg Attendance %</th><th>MoM Growth</th><th>Status</th></tr></thead>
+        <tbody id="tribe-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ══ MEMBER DIRECTORY ══ -->
+    <div class="view" id="view-report-members">
+      <div class="sec-hdr">
+        <div><div class="sec-title">Member Directory</div><div class="sec-sub">All members — synced from Google Sheets</div></div>
+        <input class="srch-inp" placeholder="🔍 Search..." id="dir-search" oninput="filterDir()">
+      </div>
+      <div class="table-card" style="margin-bottom:30px;">
+        <table><thead><tr><th>Name</th><th>Tribe</th><th>Status</th><th>Affinity</th><th>Interest</th><th>Attendance %</th><th>Training</th></tr></thead>
+        <tbody id="dir-tbody"></tbody></table>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loading">
+  <div class="loading-box">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-text">Saving to Google Sheets…</div>
+    <div class="loading-sub" id="loading-sub">This only takes a moment</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  CONFIG — Google Apps Script endpoint
+// ══════════════════════════════════════════════
+const API = 'https://script.google.com/macros/s/AKfycby9yeJWuT12n_fDaEAmu2F0FmcFZT6Nstjmc-sk1hUz4RBz7Sr043jjlJgIiBQsuFQZ/exec';
+
+// ══════════════════════════════════════════════
+//  LOCAL DATA STORE (populated from Sheets)
+// ══════════════════════════════════════════════
+const D = {
+  month:'June 2026', monthIdx:0,
+  months:['June 2026','May 2026','April 2026','March 2026'],
+  kpis:{ft:0,nm:0,souls:0,icu:0,'2nd':0,bap:0,imm:0,mclass:0},
+  att:{mem:[],wkr:[],lbl:[]},
+  souls_w:[0,0,0,0],
+  funnel:[
+    {lbl:'First Timers',n:0,c:'#0d1b2a'},{lbl:'Said Yes',n:0,c:'#c9a84c'},
+    {lbl:'Second Timers',n:0,c:'#1a5f8a'},{lbl:'Membership Class',n:0,c:'#2d7d5f'},
+    {lbl:'New Members',n:0,c:'#d4672a'}
+  ],
+  affinity:[{lbl:'Students',n:0,c:'#0d1b2a'},{lbl:'Married',n:0,c:'#c9a84c'},{lbl:'Ladies',n:0,c:'#1a5f8a'},{lbl:'Men',n:0,c:'#2d7d5f'}],
+  interest:[{lbl:'Finance',n:0,c:'#d4672a'},{lbl:'Travel',n:0,c:'#8a6a1a'},{lbl:'Business',n:0,c:'#5a2d82'},{lbl:'Career',n:0,c:'#1a5f8a'}],
+  workers:[], membersAtt:[],
+  tribes:[
+    {name:'Tribe Alpha',mem:0,att:0,growth:0,status:'Stable'},
+    {name:'Tribe Beta',mem:0,att:0,growth:0,status:'Stable'},
+    {name:'Tribe Gamma',mem:0,att:0,growth:0,status:'Stable'},
+    {name:'Tribe Delta',mem:0,att:0,growth:0,status:'Stable'},
+    {name:'Tribe Epsilon',mem:0,att:0,growth:0,status:'Stable'},
+    {name:'Tribe Zeta',mem:0,att:0,growth:0,status:'Stable'}
+  ],
+  newMembers:[], firstTimers:[],
+  events:[], training:{name:'',enrolled:0,active:0,done:0,total:0}
+};
+
+// ══════════════════════════════════════════════
+//  SHEET → COLUMN DEFINITIONS
+// ══════════════════════════════════════════════
+const SHEET_HEADERS = {
+  FirstTimers:   ['Name','Date','Said Yes','Stage','Membership Class','Follow-up Owner','Phone'],
+  Members:       ['Name','Date Joined','Tribe','Status','Baptised','Discipleship','Affinity Group','Interest Group'],
+  Attendance:    ['Date','Members Present','Workers Present','Total Attendance','Immerse Attendance'],
+  IndAttendance: ['Name','Role','Services Attended','Total Services','Attendance %'],
+  TribeAttendance:['Tribe Name','Meeting Date','Members Present','Total Members','Attendance %'],
+  SoulsSaved:    ['Week','Souls Saved','Joined Discipleship','Service Date'],
+  GuestRatio:    ['Month','New Members','Total Guests','New Members YTD','Total Guests YTD'],
+  Training:      ['Training Name','Member Name','Status','Start Date'],
+  Events:        ['Event Name','Week','Event Type','Attendance','Date'],
+  MemberMetrics: ['Month','Baptisms','ICU Turned Around','Transferred Out','Members Left','Moved Within Lagos','Moved Out Lagos','Out of Nigeria']
+};
+
+// ══════════════════════════════════════════════
+//  API — WRITE TO SHEETS
+// ══════════════════════════════════════════════
+async function writeToSheet(sheetName, rows, action='append') {
+  setSyncStatus('syncing','Saving…');
+  showLoading('Saving to Google Sheets…','Your data is being written to the shared spreadsheet');
+  try {
+    const res = await fetch(API, {
+      method:'POST',
+      body: JSON.stringify({
+        sheet: sheetName,
+        action: action,
+        headers: SHEET_HEADERS[sheetName],
+        rows: rows
+      })
+    });
+    const json = await res.json();
+    if(json.status === 'success') {
+      setSyncStatus('synced','Saved ✓');
+      setTimeout(()=>setSyncStatus('synced','Connected'), 3000);
+      return true;
+    } else {
+      throw new Error(json.message || 'Write failed');
+    }
+  } catch(err) {
+    setSyncStatus('error','Save failed');
+    toast('⚠ Could not save to Sheets: ' + err.message);
+    return false;
+  } finally {
+    hideLoading();
+  }
+}
+
+// ══════════════════════════════════════════════
+//  API — READ FROM SHEETS
+// ══════════════════════════════════════════════
+async function readFromSheet(sheetName) {
+  try {
+    const res = await fetch(`${API}?sheet=${encodeURIComponent(sheetName)}`);
+    const json = await res.json();
+    if(json.status === 'success') return json.rows || [];
+    return [];
+  } catch(err) {
+    return [];
+  }
+}
+
+// ══════════════════════════════════════════════
+//  REFRESH — PULL ALL DATA FROM SHEETS
+// ══════════════════════════════════════════════
+async function refreshAllData() {
+  setSyncStatus('syncing','Refreshing…');
+  showLoading('Pulling latest data…','Fetching all sheets from Google Sheets');
+
+  try {
+    const [ftRows, memberRows, attRows, indAttRows, tribeAttRows, soulsRows, evRows, trnRows, metricRows] = await Promise.all([
+      readFromSheet('FirstTimers'),
+      readFromSheet('Members'),
+      readFromSheet('Attendance'),
+      readFromSheet('IndAttendance'),
+      readFromSheet('TribeAttendance'),
+      readFromSheet('SoulsSaved'),
+      readFromSheet('Events'),
+      readFromSheet('Training'),
+      readFromSheet('MemberMetrics')
+    ]);
+
+    // ── First Timers ──
+    D.firstTimers = ftRows.map(r=>({
+      name:r['Name']||'', date:r['Date']||'',
+      yes:r['Said Yes']||'Undecided', stage:r['Stage']||'First Timer',
+      cls:r['Membership Class']||'Not yet', fu:r['Follow-up Owner']||'—'
+    }));
+    D.kpis.ft = D.firstTimers.length;
+    D.kpis['2nd'] = D.firstTimers.filter(f=>f.stage==='Second Timer').length;
+    D.kpis.mclass = D.firstTimers.filter(f=>f.stage==='Membership Class').length;
+    D.funnel[0].n = D.kpis.ft;
+    D.funnel[1].n = D.firstTimers.filter(f=>f.yes==='Yes').length;
+    D.funnel[2].n = D.kpis['2nd'];
+    D.funnel[3].n = D.kpis.mclass;
+    D.funnel[4].n = D.firstTimers.filter(f=>f.stage==='New Member').length;
+
+    // ── Members ──
+    D.newMembers = memberRows.map(r=>({
+      name:r['Name']||'', joined:r['Date Joined']||'',
+      tribe:r['Tribe']||'Unassigned', status:r['Status']||'Active',
+      bap:r['Baptised']||'No', disc:r['Discipleship']||'No'
+    }));
+    D.kpis.nm = D.newMembers.filter(m=>m.status==='Active').length;
+    // Affinity/interest group counts
+    ['Students','Married','Ladies','Men'].forEach((g,i)=>{
+      D.affinity[i].n = memberRows.filter(r=>(r['Affinity Group']||'')=== g).length;
+    });
+    ['Finance','Travel','Business','Career'].forEach((g,i)=>{
+      D.interest[i].n = memberRows.filter(r=>(r['Interest Group']||'')=== g).length;
+    });
+
+    // ── Attendance ──
+    if(attRows.length>0){
+      const monthMap={};
+      attRows.forEach(r=>{
+        const d=r['Date']||''; if(!d) return;
+        const mo=d.substring(0,7);
+        if(!monthMap[mo]) monthMap[mo]={mem:0,wkr:0,cnt:0};
+        monthMap[mo].mem+=parseInt(r['Members Present'])||0;
+        monthMap[mo].wkr+=parseInt(r['Workers Present'])||0;
+        monthMap[mo].cnt++;
+        const imm=parseInt(r['Immerse Attendance'])||0;
+        if(imm>D.kpis.imm) D.kpis.imm=imm;
+      });
+      const mos=Object.keys(monthMap).sort();
+      D.att.lbl=mos.map(m=>{const dd=new Date(m+'-01');return dd.toLocaleString('default',{month:'short'});});
+      D.att.mem=mos.map(m=>monthMap[m].mem);
+      D.att.wkr=mos.map(m=>monthMap[m].wkr);
+    }
+
+    // ── Individual Attendance ──
+    D.workers = indAttRows.filter(r=>(r['Role']||'').includes('Worker')).map(r=>({name:r['Name'],att:parseInt(r['Attendance %'])||0}));
+    D.membersAtt = indAttRows.filter(r=>(r['Role']||'').includes('Member')).map(r=>({name:r['Name'],att:parseInt(r['Attendance %'])||0}));
+
+    // ── Tribe Attendance ──
+    if(tribeAttRows.length>0){
+      D.tribes.forEach(t=>{
+        const matching=tribeAttRows.filter(r=>(r['Tribe Name']||'').toLowerCase().includes(t.name.toLowerCase().replace('tribe ','')));
+        if(matching.length>0){
+          const last=matching[matching.length-1];
+          t.mem=parseInt(last['Total Members'])||t.mem;
+          t.att=parseInt(last['Attendance %'])||0;
+          t.status=t.att>=80?'Growing':t.att>=65?'Stable':'ICU Watch';
+        }
+      });
+    }
+
+    // ── Souls Saved ──
+    if(soulsRows.length>0){
+      D.souls_w=[0,0,0,0];
+      soulsRows.forEach(r=>{
+        const wk=r['Week']||'';
+        const idx=['Week 1','Week 2','Week 3','Week 4'].indexOf(wk);
+        if(idx>=0) D.souls_w[idx]+=parseInt(r['Souls Saved'])||0;
+      });
+      D.kpis.souls=D.souls_w.reduce((a,b)=>a+b,0);
+    }
+
+    // ── Events ──
+    D.events=evRows.map(r=>({name:r['Event Name'],week:r['Week'],type:r['Event Type'],att:r['Attendance']}));
+
+    // ── Training ──
+    if(trnRows.length>0){
+      D.training.enrolled=trnRows.length;
+      D.training.active=trnRows.filter(r=>r['Status']==='Active').length;
+      D.training.done=trnRows.filter(r=>r['Status']==='Completed').length;
+      if(trnRows[0]) D.training.name=trnRows[0]['Training Name']||'';
+    }
+
+    // ── Member Metrics ──
+    if(metricRows.length>0){
+      const last=metricRows[metricRows.length-1];
+      D.kpis.bap=parseInt(last['Baptisms'])||D.kpis.bap;
+      D.kpis.icu=parseInt(last['ICU Turned Around'])||D.kpis.icu;
+    }
+
+    setSyncStatus('synced','Up to date');
+    toast('✓ All data refreshed from Google Sheets');
+    renderDashboard();
+
+  } catch(err) {
+    setSyncStatus('error','Refresh failed');
+    toast('⚠ Could not refresh: ' + err.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+// ══════════════════════════════════════════════
+//  SYNC STATUS INDICATOR
+// ══════════════════════════════════════════════
+function setSyncStatus(state, label) {
+  const dot=document.getElementById('sync-dot');
+  const lbl=document.getElementById('sync-label');
+  dot.className='sync-dot '+state;
+  lbl.textContent=label;
+}
+
+// ══════════════════════════════════════════════
+//  LOADING OVERLAY
+// ══════════════════════════════════════════════
+function showLoading(text='Saving…', sub='') {
+  document.getElementById('loading-text').textContent=text;
+  document.getElementById('loading-sub').textContent=sub;
+  document.getElementById('loading').classList.add('show');
+}
+function hideLoading() { document.getElementById('loading').classList.remove('show'); }
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+function toast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ══════════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════════
+const V_TITLES={'dashboard':'Dashboard','insights':'AI Insights','bulk-upload':'Bulk Upload','entry-ft':'First Timers','entry-members':'Members & Tribes','entry-attendance':'Attendance','entry-growth':'Growth & Discipleship','entry-training':'Training & Events','report-tribes':'Tribe Reports','report-members':'Member Directory'};
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active');});
+  document.getElementById('topbar-title').textContent=V_TITLES[id]||'Dashboard';
+  if(id==='dashboard') renderDashboard();
+  if(id==='insights') generateInsights();
+  if(id==='report-tribes') renderTribeReport();
+  if(id==='report-members') renderDir();
+  if(id==='entry-attendance') buildTribeAttForm();
+  if(id==='bulk-upload') buildUploadHub();
+}
+function cycleMonth() {
+  D.monthIdx=(D.monthIdx+1)%D.months.length; D.month=D.months[D.monthIdx];
+  document.getElementById('month-disp').textContent=D.month;
+  const el=document.getElementById('ins-month'); if(el) el.textContent=D.month;
+}
+
+// ══════════════════════════════════════════════
+//  DASHBOARD RENDERS
+// ══════════════════════════════════════════════
+function renderDashboard() {
+  ['ft','nm','souls','icu','2nd','bap','imm','mclass'].forEach(k=>{
+    const el=document.getElementById('k-'+k);
+    if(el) el.textContent=D.kpis[k]||0;
+  });
+  renderAttChart(); renderFunnel(); renderSoulsChart();
+  renderGroupsDonut(); renderAttList('workers');
+  renderTribeGrid(); renderMembersTable(); renderFTTable();
+}
+function renderAttChart() {
+  const el=document.getElementById('att-chart');
+  if(!D.att.lbl.length){el.innerHTML='<div style="color:var(--text-mute);font-size:12px;margin:auto;">No attendance data yet — upload or enter data</div>';return;}
+  const max=Math.max(...D.att.mem,...D.att.wkr,1);
+  el.innerHTML=D.att.lbl.map((l,i)=>`
+    <div class="bar-wrap">
+      <div style="display:flex;gap:2px;align-items:flex-end;width:100%;height:140px;">
+        <div class="bar" style="background:var(--navy);height:${D.att.mem[i]/max*100}%;flex:1;"><div class="bar-tip">${D.att.mem[i]} members</div></div>
+        <div class="bar" style="background:var(--gold);height:${D.att.wkr[i]/max*100}%;flex:1;"><div class="bar-tip">${D.att.wkr[i]} workers</div></div>
+      </div><div class="bar-lbl">${l}</div></div>`).join('');
+}
+function renderFunnel() {
+  const el=document.getElementById('funnel');
+  const max=Math.max(D.funnel[0].n,1);
+  el.innerHTML=D.funnel.map(f=>`
+    <div class="funnel-item">
+      <div class="funnel-row"><span style="color:var(--text-mid)">${f.lbl}</span><span style="font-family:'DM Mono',monospace;font-size:11px;">${f.n} <span style="color:var(--text-mute)">(${Math.round(f.n/max*100)}%)</span></span></div>
+      <div class="prog-bar"><div class="prog-fill" style="background:${f.c};width:${f.n/max*100}%"></div></div>
+    </div>`).join('');
+}
+function renderSoulsChart() {
+  const el=document.getElementById('souls-chart');
+  const max=Math.max(...D.souls_w,1);
+  el.innerHTML=D.souls_w.map((v,i)=>`
+    <div class="bar-wrap">
+      <div class="bar" style="background:var(--gold);height:${v/max*100}%;width:100%;"><div class="bar-tip">${v} souls</div></div>
+      <div class="bar-lbl">Wk ${i+1}</div></div>`).join('');
+}
+function renderGroupsDonut() {
+  const el=document.getElementById('groups-donut');
+  const all=[...D.affinity]; const total=Math.max(all.reduce((s,g)=>s+g.n,0),1);
+  let off=0; const r=42,cx=55,cy=55,circ=2*Math.PI*r;
+  const slices=all.map(g=>{const pct=g.n/total;const dash=pct*circ;const s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${g.c}" stroke-width="16" stroke-dasharray="${dash} ${circ}" stroke-dashoffset="${-off*circ}" style="transform:rotate(-90deg);transform-origin:${cx}px ${cy}px"/>`;off+=pct;return s;}).join('');
+  el.innerHTML=`<svg class="donut-svg" viewBox="0 0 110 110">${slices}</svg>
+    <div class="donut-leg">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;color:var(--text-mute);margin-bottom:3px;">AFFINITY</div>
+      ${D.affinity.map(g=>`<div class="donut-item"><div class="donut-dot" style="background:${g.c}"></div>${g.lbl}<span class="donut-pct">${g.n}</span></div>`).join('')}
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;color:var(--text-mute);margin:5px 0 3px;">INTEREST</div>
+      ${D.interest.map(g=>`<div class="donut-item"><div class="donut-dot" style="background:${g.c}"></div>${g.lbl}<span class="donut-pct">${g.n}</span></div>`).join('')}
+    </div>`;
+}
+let curTab='workers';
+function switchAttTab(btn,tab){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');curTab=tab;renderAttList(tab);}
+function renderAttList(tab) {
+  const data=tab==='workers'?D.workers:D.membersAtt;
+  const el=document.getElementById('att-list');
+  if(!data.length){el.innerHTML='<div style="color:var(--text-mute);font-size:12px;padding:8px;">No data yet — upload individual attendance data</div>';return;}
+  el.innerHTML=data.map(d=>{const c=d.att>=90?'var(--green)':d.att>=70?'var(--gold)':'var(--red)';return `<div class="att-item"><div class="att-name">${d.name}</div><div class="att-bar-wrap"><div class="prog-bar"><div class="prog-fill" style="background:${c};width:${d.att}%"></div></div></div><div class="att-pct">${d.att}%</div></div>`;}).join('');
+}
+function renderTribeGrid() {
+  document.getElementById('tribe-grid').innerHTML=D.tribes.map(t=>{
+    const sc=t.status==='Growing'?'active':t.status==='ICU Watch'?'pending':'inactive';
+    const c=t.status==='Growing'?'var(--green)':t.status==='ICU Watch'?'var(--orange)':'var(--blue)';
+    return `<div class="tribe-card"><div class="tribe-name">${t.name}<span class="badge ${sc}">${t.status}</span></div>
+      <div class="tribe-stat"><span>Members</span><span>${t.mem}</span></div>
+      <div class="tribe-stat"><span>Avg Attendance</span><span>${t.att}%</span></div>
+      <div class="prog-bar" style="margin:5px 0;"><div class="prog-fill" style="background:${c};width:${t.att}%"></div></div>
+      <div class="tribe-stat"><span>MoM Growth</span><span style="color:${t.growth>=0?'var(--green)':'var(--red)'};">${t.growth>=0?'+':''}${t.growth}%</span></div></div>`;
+  }).join('');
+}
+function renderMembersTable(filter='') {
+  const data=D.newMembers.filter(m=>!filter||m.name.toLowerCase().includes(filter.toLowerCase()));
+  document.getElementById('m-tbody').innerHTML=data.length?data.map(m=>{
+    const sc=m.status==='Active'?'active':m.status==='ICU'?'pending':'inactive';
+    return `<tr><td><strong>${m.name}</strong></td><td>${m.joined}</td><td>${m.tribe}</td><td><span class="badge ${sc}">${m.status}</span></td><td>${m.bap}</td><td><span class="badge ${m.disc==='Yes'?'active':m.disc==='In Progress'?'b-gold':'inactive'}">${m.disc}</span></td></tr>`;
+  }).join(''):'<tr><td colspan="6" style="color:var(--text-mute);text-align:center;padding:20px;">No members yet — add individually or use Bulk Upload</td></tr>';
+}
+function filterMembers(){renderMembersTable(document.getElementById('m-search').value);}
+function renderFTTable() {
+  document.getElementById('ft-tbody').innerHTML=D.firstTimers.length?D.firstTimers.map(f=>{
+    const sc=f.stage==='New Member'?'active':f.stage==='Membership Class'?'b-blue':f.stage==='Second Timer'?'b-gold':'inactive';
+    return `<tr><td><strong>${f.name}</strong></td><td>${f.date}</td><td><span class="badge ${f.yes==='Yes'?'active':f.yes==='No'?'inactive':'pending'}">${f.yes}</span></td><td><span class="badge ${sc}">${f.stage}</span></td><td>${f.cls}</td><td>${f.fu}</td></tr>`;
+  }).join(''):'<tr><td colspan="6" style="color:var(--text-mute);text-align:center;padding:20px;">No first timers yet</td></tr>';
+}
+
+// ══════════════════════════════════════════════
+//  INSIGHTS
+// ══════════════════════════════════════════════
+function generateInsights() {
+  document.getElementById('ins-month').textContent=D.month;
+  const conv=D.kpis.ft>0?Math.round(D.kpis.nm/D.kpis.ft*100):0;
+  const topT=[...D.tribes].sort((a,b)=>b.growth-a.growth)[0];
+  const watchT=[...D.tribes].sort((a,b)=>a.att-b.att)[0];
+  const avgAtt=Math.round(D.tribes.reduce((s,t)=>s+t.att,0)/D.tribes.length)||0;
+  const insights=[
+    {type:'pos',tag:'Conversion',title:`${conv}% First-Timer Conversion`,text:`Out of ${D.kpis.ft} first timers, ${D.kpis.nm} became members. ${conv>=40?'Strong — the follow-up process is working.':'Room to tighten first-timer follow-up.'}`},
+    {type:D.kpis.souls>=10?'pos':'warn',tag:'Evangelism',title:`${D.kpis.souls} Souls Saved`,text:`${D.kpis.souls} decisions this month. Connect every saved soul to discipleship within 2 weeks.`},
+    {type:'neu',tag:'Tribe Leader',title:`${topT.name} Leads Growth`,text:`${topT.name} leads with ${topT.mem} members and ${topT.att}% avg attendance. Study and replicate what's working.`},
+    {type:'warn',tag:'Needs Attention',title:`${watchT.name} Lowest Attendance (${watchT.att}%)`,text:`Below church average of ${avgAtt}%. Recommend a pastoral check-in with tribe leader before month end.`},
+    {type:'pos',tag:'Immerse',title:`${D.kpis.imm} at Friday Immerse`,text:`Strong mid-week engagement. Keep nurturing Immerse as a key discipleship touchpoint.`},
+    {type:D.kpis.bap>=6?'pos':'neu',tag:'Baptisms',title:`${D.kpis.bap} Baptisms`,text:`Celebrate publicly in next Sunday's service to inspire others.`},
+    {type:D.kpis.icu>=4?'pos':'alert',tag:'ICU Turnaround',title:`${D.kpis.icu} ICU Members Reactivated`,text:`Keep following up remaining ICU members systematically through tribe leaders.`},
+    {type:'neu',tag:'Training',title:`${D.training.total>0?Math.round(D.training.enrolled/D.training.total*100):0}% of Members in Training`,text:`${D.training.enrolled} enrolled, ${D.training.done} completed. Target: 30% of membership by Q3.`}
+  ]
