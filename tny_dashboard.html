@@ -681,9 +681,9 @@ function refreshAllData() {
     // Filter rows by month where date is available
     var ftFiltered = ftRows.filter(function(r) { return matchesMonth(r,'Date'); });
     var memberFiltered = memberRows.filter(function(r) { return matchesMonth(r,'Date Joined'); });
-    var attFiltered = attRows.filter(function(r) { return matchesMonth(r,'Date'); });
+    var attFiltered = attRows; // Use ALL attendance for the trend chart — shows full history
     var indAttFiltered = indAttRows; // keep all individual attendance
-    var tribeAttFiltered = tribeAttRows.filter(function(r) { return matchesMonth(r,'Meeting Date'); });
+    var tribeAttFiltered = tribeAttRows; // Use ALL tribe attendance — show most recent entry per tribe regardless of month
     var soulsFiltered = soulsRows.filter(function(r) { return matchesMonth(r,'Service Date'); });
     var evFiltered = evRows.filter(function(r) { return matchesMonth(r,'Date'); });
 
@@ -743,12 +743,26 @@ function refreshAllData() {
     if (tribeAttFiltered.length > 0) {
       D.tribes.forEach(function(t) {
         var matching = tribeAttFiltered.filter(function(r) {
-          return (r['Tribe Name']||'').toLowerCase().includes(t.name.toLowerCase().replace('tribe ','').trim());
+          var rowTribe = (r['Tribe Name']||'').toLowerCase().trim();
+          var tName = t.name.toLowerCase().trim();
+          return rowTribe === tName || rowTribe.includes(tName) || tName.includes(rowTribe);
         });
         if (matching.length > 0) {
-          var last = matching[matching.length - 1];
+          // Sort by date descending, pick most recent
+          matching.sort(function(a,b) {
+            var da = new Date(a['Meeting Date']||'2000-01-01');
+            var db = new Date(b['Meeting Date']||'2000-01-01');
+            return db - da;
+          });
+          var last = matching[0];
           t.mem = parseInt(last['Total Members']) || t.mem;
           t.att = parseInt(last['Attendance %']) || 0;
+          // Also calculate growth vs previous entry if available
+          if (matching.length > 1) {
+            var prev = matching[1];
+            var prevAtt = parseInt(prev['Attendance %']) || 0;
+            t.growth = prevAtt > 0 ? Math.round((t.att - prevAtt) / prevAtt * 100) : 0;
+          }
           t.status = t.att >= 80 ? 'Growing' : t.att >= 65 ? 'Stable' : 'ICU Watch';
         }
       });
@@ -1369,10 +1383,4 @@ setTimeout(function() {
     <div style="display:flex;gap:6px;align-items:center;">
       <button onclick="changePickerYear(-1)" style="background:var(--cream);border:1px solid #ddd;border-radius:6px;padding:3px 10px;cursor:pointer;font-size:13px;font-family:DM Sans,sans-serif;color:var(--navy);">&#9664;</button>
       <span id="picker-year" style="font-weight:700;font-size:14px;color:var(--navy);min-width:42px;text-align:center;">2026</span>
-      <button onclick="changePickerYear(1)" style="background:var(--cream);border:1px solid #ddd;border-radius:6px;padding:3px 10px;cursor:pointer;font-size:13px;font-family:DM Sans,sans-serif;color:var(--navy);">&#9654;</button>
-    </div>
-  </div>
-  <div id="month-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
-  <div style="margin-top:12px;padding-top:10px;border-top:1px solid #ede8df;display:flex;justify-content:space-between;align-items:center;">
-    <span style="font-size:10px;color:var(--text-mute);">Showing data for selected month</span>
-    <button onclick="goToLatestMonth()" style="background:var(--navy);color:var(--gold);border:none;border-radius:6px;padding:5px 12px;font-size:11px;fon
+      <button onclick="changePickerYear(1)" style="backgrou
