@@ -22,15 +22,14 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:#ede8df;color:var(--text);min-height:100vh;overflow-x:hidden;}
 .app{display:flex;height:100vh;overflow:hidden;}
-
-/* SIDEBAR */
 .sidebar{width:232px;min-width:232px;background:var(--navy);display:flex;flex-direction:column;z-index:10;}
 .sidebar-logo{padding:24px 20px 18px;border-bottom:1px solid rgba(201,168,76,0.15);}
 .brand{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold);}
 .brand-sub{font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:.14em;text-transform:uppercase;margin-top:2px;}
 .sync-status{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:10px;color:rgba(255,255,255,0.35);}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;}
-.sync-dot.synced{background:#2d7d5f;} .sync-dot.syncing{background:var(--gold);animation:pulse 1s infinite;}
+.sync-dot.synced{background:#2d7d5f;}
+.sync-dot.syncing{background:var(--gold);animation:pulse 1s infinite;}
 .sync-dot.error{background:var(--red);}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 .sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto;}
@@ -39,8 +38,6 @@ body{font-family:'DM Sans',sans-serif;background:#ede8df;color:var(--text);min-h
 .nav-item:hover{background:rgba(201,168,76,0.08);color:rgba(255,255,255,0.85);}
 .nav-item.active{background:var(--gold-pale);color:var(--gold);font-weight:500;}
 .nav-item .ico{font-size:14px;width:18px;text-align:center;}
-
-/* MAIN */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .topbar{background:white;border-bottom:1px solid #e8e2d8;padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .topbar-left{display:flex;align-items:center;gap:14px;}
@@ -48,33 +45,27 @@ body{font-family:'DM Sans',sans-serif;background:#ede8df;color:var(--text);min-h
 .month-sel{display:flex;align-items:center;gap:6px;background:var(--cream);border:1px solid var(--border);border-radius:7px;padding:5px 12px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text-mid);}
 .topbar-right{display:flex;align-items:center;gap:9px;}
 .btn-primary{background:var(--gold);color:var(--navy);border:none;border-radius:7px;padding:7px 16px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;display:flex;align-items:center;gap:5px;}
-.btn-primary:hover{background:var(--gold-light);transform:translateY(-1px);}
+.btn-primary:hover{background:var(--gold-light);}
 .btn-sec{background:transparent;color:var(--text-mid);border:1px solid #ddd;border-radius:7px;padding:7px 14px;font-size:12.5px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;}
 .btn-sec:hover{border-color:var(--gold);color:var(--gold);}
-.btn-refresh{background:var(--navy);color:var(--gold);border:none;border-radius:7px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;display:flex;align-items:center;gap:5px;}
+.btn-refresh{background:var(--navy);color:var(--gold);border:none;border-radius:7px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;}
 .btn-refresh:hover{background:var(--navy-light);}
 .content{flex:1;overflow-y:auto;padding:22px 28px;}
-.view{display:none;} .view.active{display:block;}
-
-/* KPI */
+.view{display:none;}.view.active{display:block;}
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
 .kpi-card{background:white;border-radius:11px;padding:18px;border:1px solid #ede8df;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s;}
 .kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
 .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
-.ck-gold::before{background:var(--gold);} .ck-green::before{background:var(--green);}
-.ck-blue::before{background:var(--blue);} .ck-orange::before{background:var(--orange);}
+.ck-gold::before{background:var(--gold);}.ck-green::before{background:var(--green);}
+.ck-blue::before{background:var(--blue);}.ck-orange::before{background:var(--orange);}
 .ck-red::before{background:var(--red);}
 .kpi-label{font-size:10px;font-weight:600;color:var(--text-mute);text-transform:uppercase;letter-spacing:.08em;}
 .kpi-val{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;margin:5px 0 3px;}
-.kpi-delta{font-size:11px;} .kpi-delta.up{color:var(--green);} .kpi-delta.dn{color:var(--red);}
+.kpi-delta{font-size:11px;color:var(--green);}
 .kpi-ico{position:absolute;right:14px;top:14px;font-size:26px;opacity:.1;}
-
-/* SECTIONS */
 .sec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;margin-top:24px;}
 .sec-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;}
 .sec-sub{font-size:11px;color:var(--text-mute);margin-top:2px;}
-
-/* CHARTS */
 .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
 .chart-card{background:white;border-radius:11px;padding:20px;border:1px solid #ede8df;box-shadow:var(--shadow);}
 .chart-title{font-size:12px;font-weight:600;color:var(--text-mid);margin-bottom:14px;}
@@ -98,8 +89,6 @@ body{font-family:'DM Sans',sans-serif;background:#ede8df;color:var(--text);min-h
 .chart-legend{display:flex;gap:14px;margin-top:8px;}
 .legend-item{font-size:10px;display:flex;align-items:center;gap:4px;}
 .legend-dot{width:9px;height:9px;border-radius:2px;display:inline-block;}
-
-/* TABLES */
 .table-card{background:white;border-radius:11px;border:1px solid #ede8df;box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;}
 table{width:100%;border-collapse:collapse;}
 thead th{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-mute);padding:9px 18px;text-align:left;background:#faf8f4;border-bottom:1px solid #ede8df;}
@@ -122,8 +111,15 @@ tbody tr:hover td{background:#faf8f4;}
 .tribe-name{font-weight:600;font-size:13px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
 .tribe-stat{display:flex;justify-content:space-between;font-size:11px;color:var(--text-mute);margin-bottom:5px;}
 .tribe-stat span:last-child{font-weight:600;color:var(--text);}
-
-/* FORMS */
+.ins-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;}
+.ins-card{background:white;border-radius:11px;padding:18px;border:1px solid #ede8df;box-shadow:var(--shadow);border-left:4px solid transparent;}
+.ins-card.pos{border-left-color:var(--green);}.ins-card.warn{border-left-color:var(--orange);}
+.ins-card.neu{border-left-color:var(--blue);}.ins-card.alert{border-left-color:var(--red);}
+.ins-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.ins-tag.pos{color:var(--green);}.ins-tag.warn{color:var(--orange);}.ins-tag.neu{color:var(--blue);}.ins-tag.alert{color:var(--red);}
+.ins-title{font-weight:600;font-size:13px;margin-bottom:5px;}
+.ins-text{font-size:12px;line-height:1.65;color:var(--text-mid);}
+.action-item{background:white;border-radius:9px;padding:12px 16px;font-size:12px;border:1px solid #ede8df;box-shadow:var(--shadow);display:flex;gap:9px;align-items:flex-start;margin-bottom:8px;}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
 .form-sec{background:white;border-radius:11px;padding:22px;border:1px solid #ede8df;box-shadow:var(--shadow);}
 .form-sec-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;margin-bottom:14px;padding-bottom:11px;border-bottom:1px solid #ede8df;display:flex;align-items:center;gap:7px;}
@@ -133,8 +129,8 @@ tbody tr:hover td{background:#faf8f4;}
 .form-inp:focus,.form-sel:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-pale);}
 .form-2col{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
 .form-submit{width:100%;padding:11px;background:var(--navy);color:var(--gold);border:none;border-radius:7px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:6px;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px;}
-.form-submit:hover{background:var(--navy-light);transform:translateY(-1px);}
-.form-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.form-submit:hover{background:var(--navy-light);}
+.form-submit:disabled{opacity:.5;cursor:not-allowed;}
 .form-note{background:var(--cream);border-radius:7px;padding:11px 13px;font-size:12px;color:var(--text-mid);margin-top:10px;line-height:1.6;}
 .divider{height:1px;background:#ede8df;margin:14px 0;}
 .srch-inp{border:1px solid #ede8df;border-radius:6px;padding:5px 11px;font-size:11.5px;font-family:'DM Sans',sans-serif;outline:none;width:170px;}
@@ -143,19 +139,6 @@ tbody tr:hover td{background:#faf8f4;}
 .tab-btn{padding:6px 14px;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-mute);font-family:'DM Sans',sans-serif;transition:all .18s;}
 .tab-btn.active{background:var(--navy);color:var(--gold);}
 .tab-btn:hover:not(.active){background:#f5f0e8;}
-
-/* INSIGHTS */
-.ins-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;}
-.ins-card{background:white;border-radius:11px;padding:18px;border:1px solid #ede8df;box-shadow:var(--shadow);border-left:4px solid transparent;}
-.ins-card.pos{border-left-color:var(--green);} .ins-card.warn{border-left-color:var(--orange);}
-.ins-card.neu{border-left-color:var(--blue);} .ins-card.alert{border-left-color:var(--red);}
-.ins-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
-.ins-tag.pos{color:var(--green);} .ins-tag.warn{color:var(--orange);} .ins-tag.neu{color:var(--blue);} .ins-tag.alert{color:var(--red);}
-.ins-title{font-weight:600;font-size:13px;margin-bottom:5px;}
-.ins-text{font-size:12px;line-height:1.65;color:var(--text-mid);}
-.action-item{background:white;border-radius:9px;padding:12px 16px;font-size:12px;border:1px solid #ede8df;box-shadow:var(--shadow);display:flex;gap:9px;align-items:flex-start;margin-bottom:8px;}
-
-/* BULK UPLOAD */
 .upload-hub-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);border-radius:12px;padding:24px 28px;margin-bottom:22px;display:flex;align-items:flex-start;gap:20px;}
 .upload-hub-icon{font-size:38px;margin-top:2px;}
 .upload-hub-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:white;}
@@ -189,41 +172,30 @@ tbody tr:hover td{background:#faf8f4;}
 .preview-table{width:100%;border-collapse:collapse;font-size:11px;}
 .preview-table th{background:#f5f0e8;padding:5px 9px;text-align:left;font-weight:600;color:var(--text-mute);border-bottom:1px solid #ede8df;white-space:nowrap;}
 .preview-table td{padding:4px 9px;border-bottom:1px solid #f5f0e8;color:var(--text-mid);}
-
-/* TOAST */
 .toast{position:fixed;bottom:22px;right:22px;z-index:9999;background:var(--navy);color:white;border-left:3px solid var(--gold);padding:12px 18px;border-radius:9px;box-shadow:var(--shadow-lg);font-size:12.5px;font-weight:500;transform:translateY(80px);opacity:0;transition:all .3s ease;max-width:320px;}
 .toast.show{transform:translateY(0);opacity:1;}
-
-/* LOADING OVERLAY */
-.loading-overlay{position:fixed;inset:0;background:rgba(13,27,42,0.6);z-index:8888;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.loading-overlay{position:fixed;inset:0;background:rgba(13,27,42,0.5);z-index:8888;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
 .loading-overlay.show{opacity:1;pointer-events:all;}
 .loading-box{background:white;border-radius:14px;padding:32px 40px;text-align:center;box-shadow:var(--shadow-lg);}
 .loading-spinner{width:36px;height:36px;border:3px solid #f0ece4;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading-text{font-size:14px;font-weight:600;color:var(--text-mid);}
 .loading-sub{font-size:11px;color:var(--text-mute);margin-top:4px;}
-
-::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px;}
 </style>
 </head>
 <body>
 <div class="app">
-
-<!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="brand">TNY</div>
     <div class="brand-sub">Community Intelligence</div>
-    <div class="sync-status">
-      <div class="sync-dot" id="sync-dot"></div>
-      <span id="sync-label">Connecting…</span>
-    </div>
+    <div class="sync-status"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">Starting…</span></div>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-label">Overview</div>
     <div class="nav-item active" onclick="showView('dashboard')"><span class="ico">⬛</span>Dashboard</div>
     <div class="nav-item" onclick="showView('insights')"><span class="ico">💡</span>AI Insights</div>
-
     <div class="nav-label">Data Entry</div>
     <div class="nav-item" onclick="showView('bulk-upload')"><span class="ico">📤</span>Bulk Upload</div>
     <div class="nav-item" onclick="showView('entry-ft')"><span class="ico">🙋</span>First Timers</div>
@@ -231,14 +203,12 @@ tbody tr:hover td{background:#faf8f4;}
     <div class="nav-item" onclick="showView('entry-attendance')"><span class="ico">📋</span>Attendance</div>
     <div class="nav-item" onclick="showView('entry-growth')"><span class="ico">🌱</span>Growth & Discipleship</div>
     <div class="nav-item" onclick="showView('entry-training')"><span class="ico">🎓</span>Training & Events</div>
-
     <div class="nav-label">Reports</div>
     <div class="nav-item" onclick="showView('report-tribes')"><span class="ico">🏘</span>Tribe Reports</div>
     <div class="nav-item" onclick="showView('report-members')"><span class="ico">📊</span>Member Directory</div>
   </nav>
 </aside>
 
-<!-- MAIN -->
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
@@ -254,65 +224,65 @@ tbody tr:hover td{background:#faf8f4;}
 
   <div class="content">
 
-    <!-- ══ DASHBOARD ══ -->
+    <!-- DASHBOARD -->
     <div class="view active" id="view-dashboard">
       <div class="kpi-grid">
-        <div class="kpi-card ck-gold"><div class="kpi-ico">🙋</div><div class="kpi-label">First Timers (Month)</div><div class="kpi-val" id="k-ft">—</div><div class="kpi-delta up" id="kd-ft"></div></div>
-        <div class="kpi-card ck-green"><div class="kpi-ico">👥</div><div class="kpi-label">New Members (Month)</div><div class="kpi-val" id="k-nm">—</div><div class="kpi-delta up" id="kd-nm"></div></div>
-        <div class="kpi-card ck-blue"><div class="kpi-ico">✝️</div><div class="kpi-label">Souls Saved (Month)</div><div class="kpi-val" id="k-souls">—</div><div class="kpi-delta up" id="kd-souls"></div></div>
-        <div class="kpi-card ck-orange"><div class="kpi-ico">🔁</div><div class="kpi-label">ICU Turned Around</div><div class="kpi-val" id="k-icu">—</div><div class="kpi-delta up" id="kd-icu"></div></div>
-        <div class="kpi-card ck-blue"><div class="kpi-ico">🔄</div><div class="kpi-label">Second Timers</div><div class="kpi-val" id="k-2nd">—</div><div class="kpi-delta up"></div></div>
-        <div class="kpi-card ck-gold"><div class="kpi-ico">💧</div><div class="kpi-label">Baptisms</div><div class="kpi-val" id="k-bap">—</div><div class="kpi-delta up"></div></div>
-        <div class="kpi-card ck-green"><div class="kpi-ico">🌙</div><div class="kpi-label">Immerse Attendance</div><div class="kpi-val" id="k-imm">—</div><div class="kpi-delta up"></div></div>
-        <div class="kpi-card ck-red"><div class="kpi-ico">📚</div><div class="kpi-label">In Membership Class</div><div class="kpi-val" id="k-mclass">—</div><div class="kpi-delta up"></div></div>
+        <div class="kpi-card ck-gold"><div class="kpi-ico">🙋</div><div class="kpi-label">First Timers (Month)</div><div class="kpi-val" id="k-ft">0</div><div class="kpi-delta">Click Refresh Data to load</div></div>
+        <div class="kpi-card ck-green"><div class="kpi-ico">👥</div><div class="kpi-label">New Members</div><div class="kpi-val" id="k-nm">0</div><div class="kpi-delta"></div></div>
+        <div class="kpi-card ck-blue"><div class="kpi-ico">✝️</div><div class="kpi-label">Souls Saved</div><div class="kpi-val" id="k-souls">0</div><div class="kpi-delta"></div></div>
+        <div class="kpi-card ck-orange"><div class="kpi-ico">🔁</div><div class="kpi-label">ICU Turned Around</div><div class="kpi-val" id="k-icu">0</div><div class="kpi-delta"></div></div>
+        <div class="kpi-card ck-blue"><div class="kpi-ico">🔄</div><div class="kpi-label">Second Timers</div><div class="kpi-val" id="k-2nd">0</div><div class="kpi-delta"></div></div>
+        <div class="kpi-card ck-gold"><div class="kpi-ico">💧</div><div class="kpi-label">Baptisms</div><div class="kpi-val" id="k-bap">0</div><div class="kpi-delta"></div></div>
+        <div class="kpi-card ck-green"><div class="kpi-ico">🌙</div><div class="kpi-label">Immerse Attendance</div><div class="kpi-val" id="k-imm">0</div><div class="kpi-delta"></div></div>
+        <div class="kpi-card ck-red"><div class="kpi-ico">📚</div><div class="kpi-label">In Membership Class</div><div class="kpi-val" id="k-mclass">0</div><div class="kpi-delta"></div></div>
       </div>
       <div class="charts-row">
         <div class="chart-card">
-          <div class="chart-title">Monthly Attendance Trend — Members vs Workers</div>
-          <div class="chart-area" id="att-chart"></div>
+          <div class="chart-title">Monthly Attendance — Members vs Workers</div>
+          <div class="chart-area" id="att-chart"><div style="color:var(--text-mute);font-size:12px;margin:auto;">No data yet — click Refresh Data</div></div>
           <div class="chart-legend"><div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Members</div><div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Workers</div></div>
         </div>
         <div class="chart-card">
           <div class="chart-title">First Timer Conversion Funnel</div>
-          <div id="funnel"></div>
+          <div id="funnel"><div style="color:var(--text-mute);font-size:12px;padding:10px 0;">No data yet</div></div>
         </div>
       </div>
       <div class="charts-row">
         <div class="chart-card">
           <div class="chart-title">Souls Saved — Weekly</div>
-          <div class="chart-area" id="souls-chart"></div>
+          <div class="chart-area" id="souls-chart"><div style="color:var(--text-mute);font-size:12px;margin:auto;">No data yet</div></div>
         </div>
         <div class="chart-card">
           <div class="chart-title">Affinity & Interest Groups</div>
-          <div class="donut-wrap" id="groups-donut"></div>
+          <div class="donut-wrap" id="groups-donut"><div style="color:var(--text-mute);font-size:12px;">No data yet</div></div>
         </div>
       </div>
       <div class="sec-hdr">
-        <div><div class="sec-title">Attendance Rates</div><div class="sec-sub">This month's participation</div></div>
+        <div><div class="sec-title">Attendance Rates</div></div>
         <div class="tab-row">
           <div class="tab-btn active" onclick="switchAttTab(this,'workers')">Workers/Leaders</div>
           <div class="tab-btn" onclick="switchAttTab(this,'members')">Members</div>
         </div>
       </div>
-      <div class="chart-card" style="margin-bottom:20px;"><div class="att-row" id="att-list"></div></div>
+      <div class="chart-card" style="margin-bottom:20px;"><div class="att-row" id="att-list"><div style="color:var(--text-mute);font-size:12px;padding:8px;">No data yet</div></div></div>
       <div class="sec-hdr"><div><div class="sec-title">Tribe Performance</div></div></div>
       <div class="tribe-grid" id="tribe-grid"></div>
       <div class="sec-hdr">
-        <div><div class="sec-title">New Members — Tribe Status</div></div>
+        <div><div class="sec-title">New Members</div></div>
         <input class="srch-inp" placeholder="🔍 Search..." id="m-search" oninput="filterMembers()">
       </div>
       <div class="table-card">
         <table><thead><tr><th>Name</th><th>Joined</th><th>Tribe</th><th>Status</th><th>Baptised</th><th>Discipleship</th></tr></thead>
-        <tbody id="m-tbody"></tbody></table>
+        <tbody id="m-tbody"><tr><td colspan="6" style="color:var(--text-mute);text-align:center;padding:20px;">No data yet — add members or use Bulk Upload</td></tr></tbody></table>
       </div>
       <div class="sec-hdr"><div><div class="sec-title">First Timer Pipeline</div></div></div>
       <div class="table-card" style="margin-bottom:30px;">
         <table><thead><tr><th>Name</th><th>Date</th><th>Said Yes</th><th>Stage</th><th>Membership Class</th><th>Follow-up</th></tr></thead>
-        <tbody id="ft-tbody"></tbody></table>
+        <tbody id="ft-tbody"><tr><td colspan="6" style="color:var(--text-mute);text-align:center;padding:20px;">No data yet</td></tr></tbody></table>
       </div>
     </div>
 
-    <!-- ══ AI INSIGHTS ══ -->
+    <!-- INSIGHTS -->
     <div class="view" id="view-insights">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;">
         <div style="width:38px;height:38px;background:var(--navy);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;">💡</div>
@@ -327,24 +297,24 @@ tbody tr:hover td{background:#faf8f4;}
       <div id="action-list" style="margin-bottom:30px;"></div>
     </div>
 
-    <!-- ══ BULK UPLOAD ══ -->
+    <!-- BULK UPLOAD -->
     <div class="view" id="view-bulk-upload">
       <div class="upload-hub-header">
         <div class="upload-hub-icon">📤</div>
         <div style="flex:1;">
           <div class="upload-hub-title">Bulk Data Upload</div>
-          <div class="upload-hub-sub">Download a template, fill it in Excel, upload it here. Data saves directly to Google Sheets and the dashboard updates for everyone instantly.</div>
+          <div class="upload-hub-sub">Download a template, fill it in Excel, upload here. Data saves directly to Google Sheets and updates for everyone.</div>
           <div class="upload-hub-steps">
             <div class="step-pill"><div class="step-num">1</div>Download Template</div>
             <div class="step-pill"><div class="step-num">2</div>Fill in Excel</div>
-            <div class="step-pill"><div class="step-num">3</div>Upload & Import</div>
+            <div class="step-pill"><div class="step-num">3</div>Upload and Import</div>
           </div>
         </div>
       </div>
       <div class="upload-hub" id="upload-hub-grid"></div>
     </div>
 
-    <!-- ══ ENTRY: FIRST TIMERS ══ -->
+    <!-- ENTRY: FIRST TIMERS -->
     <div class="view" id="view-entry-ft">
       <div class="sec-hdr"><div class="sec-title">First Timer Entry</div></div>
       <div class="form-grid">
@@ -353,9 +323,9 @@ tbody tr:hover td{background:#faf8f4;}
           <div class="form-row"><label class="form-lbl">Full Name</label><input class="form-inp" id="ft-name" placeholder="e.g. Tolu Adeyemi"></div>
           <div class="form-row"><label class="form-lbl">Date of Visit</label><input class="form-inp" type="date" id="ft-date"></div>
           <div class="form-row"><label class="form-lbl">Said Yes to Church?</label>
-            <select class="form-sel" id="ft-yes"><option value="">— Select —</option><option>Yes</option><option>No</option><option>Undecided</option></select></div>
+            <select class="form-sel" id="ft-yes"><option value="">Select</option><option>Yes</option><option>No</option><option>Undecided</option></select></div>
           <div class="form-row"><label class="form-lbl">Current Stage</label>
-            <select class="form-sel" id="ft-stage"><option value="">— Select —</option><option>First Timer</option><option>Second Timer</option><option>Membership Class</option><option>New Member</option></select></div>
+            <select class="form-sel" id="ft-stage"><option value="">Select</option><option>First Timer</option><option>Second Timer</option><option>Membership Class</option><option>New Member</option></select></div>
           <div class="form-row"><label class="form-lbl">Follow-up Owner</label><input class="form-inp" id="ft-owner" placeholder="Tribe leader or volunteer"></div>
           <div class="form-row"><label class="form-lbl">Phone Number</label><input class="form-inp" id="ft-phone" placeholder="0801..."></div>
           <button class="form-submit" id="btn-save-ft" onclick="saveFirstTimer()">✓ Save to Google Sheets</button>
@@ -368,22 +338,22 @@ tbody tr:hover td{background:#faf8f4;}
           <div class="form-row"><label class="form-lbl">FTs in Membership Class</label><input class="form-inp" type="number" id="s-ftclass" placeholder="e.g. 9"></div>
           <div class="form-row"><label class="form-lbl">Month</label>
             <select class="form-sel" id="s-month"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option selected>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>
-          <div class="form-note" id="ft-preview">Enter values above to see conversion rate preview.</div>
+          <div class="form-note" id="ft-preview">Enter values to see conversion rate preview.</div>
           <button class="form-submit" id="btn-save-ftsummary" onclick="saveFTSummary()">✓ Save Summary to Sheets</button>
         </div>
       </div>
     </div>
 
-    <!-- ══ ENTRY: MEMBERS ══ -->
+    <!-- ENTRY: MEMBERS -->
     <div class="view" id="view-entry-members">
-      <div class="sec-hdr"><div class="sec-title">Member & Tribe Management</div></div>
+      <div class="sec-hdr"><div class="sec-title">Member and Tribe Management</div></div>
       <div class="form-grid">
         <div class="form-sec">
-          <div class="form-sec-title">👤 Add / Update Member</div>
-          <div class="form-row"><label class="form-lbl">Full Name</label><input class="form-inp" id="m-name" placeholder="Member's full name"></div>
+          <div class="form-sec-title">👤 Add or Update Member</div>
+          <div class="form-row"><label class="form-lbl">Full Name</label><input class="form-inp" id="m-name" placeholder="Member full name"></div>
           <div class="form-row"><label class="form-lbl">Date Joined</label><input class="form-inp" type="date" id="m-joined"></div>
           <div class="form-row"><label class="form-lbl">Tribe</label>
-            <select class="form-sel" id="m-tribe"><option value="">— Select —</option><option>Tribe Alpha</option><option>Tribe Beta</option><option>Tribe Gamma</option><option>Tribe Delta</option><option>Tribe Epsilon</option><option>Tribe Zeta</option></select></div>
+            <select class="form-sel" id="m-tribe"><option value="">Select Tribe</option><option>Tribe Alpha</option><option>Tribe Beta</option><option>Tribe Gamma</option><option>Tribe Delta</option><option>Tribe Epsilon</option><option>Tribe Zeta</option></select></div>
           <div class="form-row"><label class="form-lbl">Status</label>
             <select class="form-sel" id="m-status"><option>Active</option><option>ICU</option><option>Inactive</option><option>Transferred</option></select></div>
           <div class="form-2col">
@@ -391,9 +361,9 @@ tbody tr:hover td{background:#faf8f4;}
             <div class="form-row"><label class="form-lbl">Discipleship?</label><select class="form-sel" id="m-disc"><option>Yes</option><option>No</option><option>In Progress</option></select></div>
           </div>
           <div class="form-row"><label class="form-lbl">Affinity Group</label>
-            <select class="form-sel" id="m-affinity"><option value="">— None —</option><option>Students</option><option>Married</option><option>Ladies</option><option>Men</option></select></div>
+            <select class="form-sel" id="m-affinity"><option value="">None</option><option>Students</option><option>Married</option><option>Ladies</option><option>Men</option></select></div>
           <div class="form-row"><label class="form-lbl">Interest Group</label>
-            <select class="form-sel" id="m-interest"><option value="">— None —</option><option>Finance</option><option>Travel</option><option>Business</option><option>Career</option></select></div>
+            <select class="form-sel" id="m-interest"><option value="">None</option><option>Finance</option><option>Travel</option><option>Business</option><option>Career</option></select></div>
           <button class="form-submit" id="btn-save-member" onclick="saveMember()">✓ Save to Google Sheets</button>
         </div>
         <div class="form-sec">
@@ -418,7 +388,7 @@ tbody tr:hover td{background:#faf8f4;}
       </div>
     </div>
 
-    <!-- ══ ENTRY: ATTENDANCE ══ -->
+    <!-- ENTRY: ATTENDANCE -->
     <div class="view" id="view-entry-attendance">
       <div class="sec-hdr"><div class="sec-title">Attendance Entry</div></div>
       <div class="form-grid">
@@ -441,7 +411,7 @@ tbody tr:hover td{background:#faf8f4;}
           <div class="form-row" style="margin-top:10px;"><label class="form-lbl">Meeting Date</label><input class="form-inp" type="date" id="tribe-att-date"></div>
           <button class="form-submit" id="btn-save-tribeatt" onclick="saveTribeAtt()">✓ Save Tribe Attendance</button>
           <div class="divider"></div>
-          <div class="form-sec-title" style="border:none;padding:0;margin-bottom:10px;font-size:13px;">👤 Individual Attendance %</div>
+          <div class="form-sec-title" style="border:none;padding:0;margin-bottom:10px;font-size:13px;">👤 Individual Attendance</div>
           <div class="form-row"><label class="form-lbl">Name</label><input class="form-inp" id="ind-name" placeholder="Worker or member name"></div>
           <div class="form-row"><label class="form-lbl">Role</label><select class="form-sel" id="ind-role"><option>Worker/Leader</option><option>Member</option></select></div>
           <div class="form-2col">
@@ -454,9 +424,9 @@ tbody tr:hover td{background:#faf8f4;}
       </div>
     </div>
 
-    <!-- ══ ENTRY: GROWTH ══ -->
+    <!-- ENTRY: GROWTH -->
     <div class="view" id="view-entry-growth">
-      <div class="sec-hdr"><div class="sec-title">Growth & Discipleship</div></div>
+      <div class="sec-hdr"><div class="sec-title">Growth and Discipleship</div></div>
       <div class="form-grid">
         <div class="form-sec">
           <div class="form-sec-title">✝️ Souls Saved</div>
@@ -478,9 +448,9 @@ tbody tr:hover td{background:#faf8f4;}
       </div>
     </div>
 
-    <!-- ══ ENTRY: TRAINING ══ -->
+    <!-- ENTRY: TRAINING -->
     <div class="view" id="view-entry-training">
-      <div class="sec-hdr"><div class="sec-title">Training & Community Events</div></div>
+      <div class="sec-hdr"><div class="sec-title">Training and Community Events</div></div>
       <div class="form-grid">
         <div class="form-sec">
           <div class="form-sec-title">🎓 Training Entry</div>
@@ -493,7 +463,7 @@ tbody tr:hover td{background:#faf8f4;}
             <div class="form-row"><label class="form-lbl">Completed</label><input class="form-inp" type="number" id="trn-done" placeholder="e.g. 4"></div>
             <div class="form-row"><label class="form-lbl">Total Membership</label><input class="form-inp" type="number" id="trn-memtot" placeholder="e.g. 260" oninput="previewTraining()"></div>
           </div>
-          <div class="form-note" id="trn-preview">Enter enrolled & total to see % trained.</div>
+          <div class="form-note" id="trn-preview">Enter enrolled and total to see % trained.</div>
           <button class="form-submit" id="btn-save-trn" onclick="saveTraining()">✓ Save to Google Sheets</button>
         </div>
         <div class="form-sec">
@@ -513,7 +483,7 @@ tbody tr:hover td{background:#faf8f4;}
       </div>
     </div>
 
-    <!-- ══ TRIBE REPORTS ══ -->
+    <!-- TRIBE REPORTS -->
     <div class="view" id="view-report-tribes">
       <div class="sec-hdr"><div class="sec-title">Tribe Performance Report</div></div>
       <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);" id="tribe-kpis"></div>
@@ -526,56 +496,61 @@ tbody tr:hover td{background:#faf8f4;}
       </div>
     </div>
 
-    <!-- ══ MEMBER DIRECTORY ══ -->
+    <!-- MEMBER DIRECTORY -->
     <div class="view" id="view-report-members">
       <div class="sec-hdr">
-        <div><div class="sec-title">Member Directory</div><div class="sec-sub">All members — synced from Google Sheets</div></div>
+        <div><div class="sec-title">Member Directory</div><div class="sec-sub">Synced from Google Sheets</div></div>
         <input class="srch-inp" placeholder="🔍 Search..." id="dir-search" oninput="filterDir()">
       </div>
       <div class="table-card" style="margin-bottom:30px;">
         <table><thead><tr><th>Name</th><th>Tribe</th><th>Status</th><th>Affinity</th><th>Interest</th><th>Attendance %</th><th>Training</th></tr></thead>
-        <tbody id="dir-tbody"></tbody></table>
+        <tbody id="dir-tbody"><tr><td colspan="7" style="color:var(--text-mute);text-align:center;padding:20px;">No data yet</td></tr></tbody></table>
       </div>
     </div>
 
-  </div><!-- /content -->
-</div><!-- /main -->
-</div><!-- /app -->
+  </div>
+</div>
+</div>
 
-<!-- LOADING OVERLAY -->
 <div class="loading-overlay" id="loading">
   <div class="loading-box">
     <div class="loading-spinner"></div>
-    <div class="loading-text" id="loading-text">Saving to Google Sheets…</div>
+    <div class="loading-text" id="loading-text">Saving…</div>
     <div class="loading-sub" id="loading-sub">This only takes a moment</div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════
-//  CONFIG — Google Apps Script endpoint
-// ══════════════════════════════════════════════
-const API = 'https://script.google.com/macros/s/AKfycby9yeJWuT12n_fDaEAmu2F0FmcFZT6Nstjmc-sk1hUz4RBz7Sr043jjlJgIiBQsuFQZ/exec';
+var API = 'https://script.google.com/macros/s/AKfycby9yeJWuT12n_fDaEAmu2F0FmcFZT6Nstjmc-sk1hUz4RBz7Sr043jjlJgIiBQsuFQZ/exec';
 
-// ══════════════════════════════════════════════
-//  LOCAL DATA STORE (populated from Sheets)
-// ══════════════════════════════════════════════
-const D = {
+var D = {
   month:'June 2026', monthIdx:0,
   months:['June 2026','May 2026','April 2026','March 2026'],
-  kpis:{ft:0,nm:0,souls:0,icu:0,'2nd':0,bap:0,imm:0,mclass:0},
+  kpis:{ft:0,nm:0,souls:0,icu:0,s2nd:0,bap:0,imm:0,mclass:0},
   att:{mem:[],wkr:[],lbl:[]},
   souls_w:[0,0,0,0],
   funnel:[
-    {lbl:'First Timers',n:0,c:'#0d1b2a'},{lbl:'Said Yes',n:0,c:'#c9a84c'},
-    {lbl:'Second Timers',n:0,c:'#1a5f8a'},{lbl:'Membership Class',n:0,c:'#2d7d5f'},
+    {lbl:'First Timers',n:0,c:'#0d1b2a'},
+    {lbl:'Said Yes',n:0,c:'#c9a84c'},
+    {lbl:'Second Timers',n:0,c:'#1a5f8a'},
+    {lbl:'Membership Class',n:0,c:'#2d7d5f'},
     {lbl:'New Members',n:0,c:'#d4672a'}
   ],
-  affinity:[{lbl:'Students',n:0,c:'#0d1b2a'},{lbl:'Married',n:0,c:'#c9a84c'},{lbl:'Ladies',n:0,c:'#1a5f8a'},{lbl:'Men',n:0,c:'#2d7d5f'}],
-  interest:[{lbl:'Finance',n:0,c:'#d4672a'},{lbl:'Travel',n:0,c:'#8a6a1a'},{lbl:'Business',n:0,c:'#5a2d82'},{lbl:'Career',n:0,c:'#1a5f8a'}],
-  workers:[], membersAtt:[],
+  affinity:[
+    {lbl:'Students',n:0,c:'#0d1b2a'},
+    {lbl:'Married',n:0,c:'#c9a84c'},
+    {lbl:'Ladies',n:0,c:'#1a5f8a'},
+    {lbl:'Men',n:0,c:'#2d7d5f'}
+  ],
+  interest:[
+    {lbl:'Finance',n:0,c:'#d4672a'},
+    {lbl:'Travel',n:0,c:'#8a6a1a'},
+    {lbl:'Business',n:0,c:'#5a2d82'},
+    {lbl:'Career',n:0,c:'#1a5f8a'}
+  ],
+  workers:[],
+  membersAtt:[],
   tribes:[
     {name:'Tribe Alpha',mem:0,att:0,growth:0,status:'Stable'},
     {name:'Tribe Beta',mem:0,att:0,growth:0,status:'Stable'},
@@ -584,14 +559,13 @@ const D = {
     {name:'Tribe Epsilon',mem:0,att:0,growth:0,status:'Stable'},
     {name:'Tribe Zeta',mem:0,att:0,growth:0,status:'Stable'}
   ],
-  newMembers:[], firstTimers:[],
-  events:[], training:{name:'',enrolled:0,active:0,done:0,total:0}
+  newMembers:[],
+  firstTimers:[],
+  events:[],
+  training:{name:'',enrolled:0,active:0,done:0,total:0}
 };
 
-// ══════════════════════════════════════════════
-//  SHEET → COLUMN DEFINITIONS
-// ══════════════════════════════════════════════
-const SHEET_HEADERS = {
+var SHEET_HEADERS = {
   FirstTimers:   ['Name','Date','Said Yes','Stage','Membership Class','Follow-up Owner','Phone'],
   Members:       ['Name','Date Joined','Tribe','Status','Baptised','Discipleship','Affinity Group','Interest Group'],
   Attendance:    ['Date','Members Present','Workers Present','Total Attendance','Immerse Attendance'],
@@ -604,335 +578,705 @@ const SHEET_HEADERS = {
   MemberMetrics: ['Month','Baptisms','ICU Turned Around','Transferred Out','Members Left','Moved Within Lagos','Moved Out Lagos','Out of Nigeria']
 };
 
-// ══════════════════════════════════════════════
-//  API — WRITE TO SHEETS
-// ══════════════════════════════════════════════
-async function writeToSheet(sheetName, rows, action='append') {
-  setSyncStatus('syncing','Saving…');
-  showLoading('Saving to Google Sheets…','Your data is being written to the shared spreadsheet');
-  try {
-    const res = await fetch(API, {
-      method:'POST',
-      body: JSON.stringify({
-        sheet: sheetName,
-        action: action,
-        headers: SHEET_HEADERS[sheetName],
-        rows: rows
-      })
-    });
-    const json = await res.json();
-    if(json.status === 'success') {
-      setSyncStatus('synced','Saved ✓');
-      setTimeout(()=>setSyncStatus('synced','Connected'), 3000);
+function setSyncStatus(state, label) {
+  var dot = document.getElementById('sync-dot');
+  var lbl = document.getElementById('sync-label');
+  dot.className = 'sync-dot ' + state;
+  lbl.textContent = label;
+}
+
+function showLoading(text, sub) {
+  document.getElementById('loading-text').textContent = text || 'Saving…';
+  document.getElementById('loading-sub').textContent = sub || '';
+  document.getElementById('loading').classList.add('show');
+}
+
+function hideLoading() {
+  document.getElementById('loading').classList.remove('show');
+}
+
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3200);
+}
+
+function writeToSheet(sheetName, rows, action) {
+  action = action || 'append';
+  setSyncStatus('syncing', 'Saving…');
+  showLoading('Saving to Google Sheets…', 'Writing to your shared spreadsheet');
+  return fetch(API, {
+    method: 'POST',
+    body: JSON.stringify({
+      sheet: sheetName,
+      action: action,
+      headers: SHEET_HEADERS[sheetName] || [],
+      rows: rows
+    })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(json) {
+    hideLoading();
+    if (json.status === 'success') {
+      setSyncStatus('synced', 'Saved');
+      setTimeout(function() { setSyncStatus('synced', 'Connected'); }, 3000);
       return true;
     } else {
       throw new Error(json.message || 'Write failed');
     }
-  } catch(err) {
-    setSyncStatus('error','Save failed');
-    toast('⚠ Could not save to Sheets: ' + err.message);
-    return false;
-  } finally {
+  })
+  .catch(function(err) {
     hideLoading();
-  }
+    setSyncStatus('error', 'Save failed');
+    toast('Could not save to Sheets. Check your connection and try again.');
+    return false;
+  });
 }
 
-// ══════════════════════════════════════════════
-//  API — READ FROM SHEETS
-// ══════════════════════════════════════════════
-async function readFromSheet(sheetName) {
-  try {
-    const res = await fetch(`${API}?sheet=${encodeURIComponent(sheetName)}`);
-    const json = await res.json();
-    if(json.status === 'success') return json.rows || [];
-    return [];
-  } catch(err) {
-    return [];
-  }
+function readFromSheet(sheetName) {
+  return fetch(API + '?sheet=' + encodeURIComponent(sheetName))
+    .then(function(res) { return res.json(); })
+    .then(function(json) {
+      if (json.status === 'success') return json.rows || [];
+      return [];
+    })
+    .catch(function() { return []; });
 }
 
-// ══════════════════════════════════════════════
-//  REFRESH — PULL ALL DATA FROM SHEETS
-// ══════════════════════════════════════════════
-async function refreshAllData() {
-  setSyncStatus('syncing','Refreshing…');
-  showLoading('Pulling latest data…','Fetching all sheets from Google Sheets');
+function refreshAllData() {
+  setSyncStatus('syncing', 'Refreshing…');
+  showLoading('Pulling latest data…', 'Fetching all sheets from Google Sheets');
 
-  try {
-    const [ftRows, memberRows, attRows, indAttRows, tribeAttRows, soulsRows, evRows, trnRows, metricRows] = await Promise.all([
-      readFromSheet('FirstTimers'),
-      readFromSheet('Members'),
-      readFromSheet('Attendance'),
-      readFromSheet('IndAttendance'),
-      readFromSheet('TribeAttendance'),
-      readFromSheet('SoulsSaved'),
-      readFromSheet('Events'),
-      readFromSheet('Training'),
-      readFromSheet('MemberMetrics')
-    ]);
+  var sheets = ['FirstTimers','Members','Attendance','IndAttendance','TribeAttendance','SoulsSaved','Events','Training','MemberMetrics'];
+  var promises = sheets.map(function(s) { return readFromSheet(s); });
 
-    // ── First Timers ──
-    D.firstTimers = ftRows.map(r=>({
-      name:r['Name']||'', date:r['Date']||'',
-      yes:r['Said Yes']||'Undecided', stage:r['Stage']||'First Timer',
-      cls:r['Membership Class']||'Not yet', fu:r['Follow-up Owner']||'—'
-    }));
+  return Promise.all(promises)
+  .then(function(results) {
+    var ftRows = results[0];
+    var memberRows = results[1];
+    var attRows = results[2];
+    var indAttRows = results[3];
+    var tribeAttRows = results[4];
+    var soulsRows = results[5];
+    var evRows = results[6];
+    var trnRows = results[7];
+    var metricRows = results[8];
+
+    // First Timers
+    D.firstTimers = ftRows.map(function(r) {
+      return { name:r['Name']||'', date:r['Date']||'', yes:r['Said Yes']||'Undecided', stage:r['Stage']||'First Timer', cls:r['Membership Class']||'Not yet', fu:r['Follow-up Owner']||'—' };
+    });
     D.kpis.ft = D.firstTimers.length;
-    D.kpis['2nd'] = D.firstTimers.filter(f=>f.stage==='Second Timer').length;
-    D.kpis.mclass = D.firstTimers.filter(f=>f.stage==='Membership Class').length;
+    D.kpis.s2nd = D.firstTimers.filter(function(f) { return f.stage === 'Second Timer'; }).length;
+    D.kpis.mclass = D.firstTimers.filter(function(f) { return f.stage === 'Membership Class'; }).length;
     D.funnel[0].n = D.kpis.ft;
-    D.funnel[1].n = D.firstTimers.filter(f=>f.yes==='Yes').length;
-    D.funnel[2].n = D.kpis['2nd'];
+    D.funnel[1].n = D.firstTimers.filter(function(f) { return f.yes === 'Yes'; }).length;
+    D.funnel[2].n = D.kpis.s2nd;
     D.funnel[3].n = D.kpis.mclass;
-    D.funnel[4].n = D.firstTimers.filter(f=>f.stage==='New Member').length;
+    D.funnel[4].n = D.firstTimers.filter(function(f) { return f.stage === 'New Member'; }).length;
 
-    // ── Members ──
-    D.newMembers = memberRows.map(r=>({
-      name:r['Name']||'', joined:r['Date Joined']||'',
-      tribe:r['Tribe']||'Unassigned', status:r['Status']||'Active',
-      bap:r['Baptised']||'No', disc:r['Discipleship']||'No'
-    }));
-    D.kpis.nm = D.newMembers.filter(m=>m.status==='Active').length;
-    // Affinity/interest group counts
-    ['Students','Married','Ladies','Men'].forEach((g,i)=>{
-      D.affinity[i].n = memberRows.filter(r=>(r['Affinity Group']||'')=== g).length;
+    // Members
+    D.newMembers = memberRows.map(function(r) {
+      return { name:r['Name']||'', joined:r['Date Joined']||'', tribe:r['Tribe']||'Unassigned', status:r['Status']||'Active', bap:r['Baptised']||'No', disc:r['Discipleship']||'No' };
     });
-    ['Finance','Travel','Business','Career'].forEach((g,i)=>{
-      D.interest[i].n = memberRows.filter(r=>(r['Interest Group']||'')=== g).length;
+    D.kpis.nm = D.newMembers.filter(function(m) { return m.status === 'Active'; }).length;
+    var affinityGroups = ['Students','Married','Ladies','Men'];
+    affinityGroups.forEach(function(g, i) {
+      D.affinity[i].n = memberRows.filter(function(r) { return (r['Affinity Group']||'') === g; }).length;
+    });
+    var interestGroups = ['Finance','Travel','Business','Career'];
+    interestGroups.forEach(function(g, i) {
+      D.interest[i].n = memberRows.filter(function(r) { return (r['Interest Group']||'') === g; }).length;
     });
 
-    // ── Attendance ──
-    if(attRows.length>0){
-      const monthMap={};
-      attRows.forEach(r=>{
-        const d=r['Date']||''; if(!d) return;
-        const mo=d.substring(0,7);
-        if(!monthMap[mo]) monthMap[mo]={mem:0,wkr:0,cnt:0};
-        monthMap[mo].mem+=parseInt(r['Members Present'])||0;
-        monthMap[mo].wkr+=parseInt(r['Workers Present'])||0;
-        monthMap[mo].cnt++;
-        const imm=parseInt(r['Immerse Attendance'])||0;
-        if(imm>D.kpis.imm) D.kpis.imm=imm;
+    // Attendance
+    if (attRows.length > 0) {
+      var monthMap = {};
+      attRows.forEach(function(r) {
+        var d = r['Date'] || '';
+        if (!d) return;
+        var mo = d.substring(0, 7);
+        if (!monthMap[mo]) monthMap[mo] = {mem:0, wkr:0};
+        monthMap[mo].mem += parseInt(r['Members Present']) || 0;
+        monthMap[mo].wkr += parseInt(r['Workers Present']) || 0;
+        var imm = parseInt(r['Immerse Attendance']) || 0;
+        if (imm > D.kpis.imm) D.kpis.imm = imm;
       });
-      const mos=Object.keys(monthMap).sort();
-      D.att.lbl=mos.map(m=>{const dd=new Date(m+'-01');return dd.toLocaleString('default',{month:'short'});});
-      D.att.mem=mos.map(m=>monthMap[m].mem);
-      D.att.wkr=mos.map(m=>monthMap[m].wkr);
+      var mos = Object.keys(monthMap).sort();
+      D.att.lbl = mos.map(function(m) {
+        var dd = new Date(m + '-01');
+        return dd.toLocaleString('default', {month:'short'});
+      });
+      D.att.mem = mos.map(function(m) { return monthMap[m].mem; });
+      D.att.wkr = mos.map(function(m) { return monthMap[m].wkr; });
     }
 
-    // ── Individual Attendance ──
-    D.workers = indAttRows.filter(r=>(r['Role']||'').includes('Worker')).map(r=>({name:r['Name'],att:parseInt(r['Attendance %'])||0}));
-    D.membersAtt = indAttRows.filter(r=>(r['Role']||'').includes('Member')).map(r=>({name:r['Name'],att:parseInt(r['Attendance %'])||0}));
+    // Individual Attendance
+    D.workers = indAttRows.filter(function(r) { return (r['Role']||'').includes('Worker'); }).map(function(r) { return {name:r['Name'], att:parseInt(r['Attendance %'])||0}; });
+    D.membersAtt = indAttRows.filter(function(r) { return (r['Role']||'').includes('Member'); }).map(function(r) { return {name:r['Name'], att:parseInt(r['Attendance %'])||0}; });
 
-    // ── Tribe Attendance ──
-    if(tribeAttRows.length>0){
-      D.tribes.forEach(t=>{
-        const matching=tribeAttRows.filter(r=>(r['Tribe Name']||'').toLowerCase().includes(t.name.toLowerCase().replace('tribe ','')));
-        if(matching.length>0){
-          const last=matching[matching.length-1];
-          t.mem=parseInt(last['Total Members'])||t.mem;
-          t.att=parseInt(last['Attendance %'])||0;
-          t.status=t.att>=80?'Growing':t.att>=65?'Stable':'ICU Watch';
+    // Tribe Attendance
+    if (tribeAttRows.length > 0) {
+      D.tribes.forEach(function(t) {
+        var matching = tribeAttRows.filter(function(r) {
+          return (r['Tribe Name']||'').toLowerCase().includes(t.name.toLowerCase().replace('tribe ','').trim());
+        });
+        if (matching.length > 0) {
+          var last = matching[matching.length - 1];
+          t.mem = parseInt(last['Total Members']) || t.mem;
+          t.att = parseInt(last['Attendance %']) || 0;
+          t.status = t.att >= 80 ? 'Growing' : t.att >= 65 ? 'Stable' : 'ICU Watch';
         }
       });
     }
 
-    // ── Souls Saved ──
-    if(soulsRows.length>0){
-      D.souls_w=[0,0,0,0];
-      soulsRows.forEach(r=>{
-        const wk=r['Week']||'';
-        const idx=['Week 1','Week 2','Week 3','Week 4'].indexOf(wk);
-        if(idx>=0) D.souls_w[idx]+=parseInt(r['Souls Saved'])||0;
+    // Souls Saved
+    if (soulsRows.length > 0) {
+      D.souls_w = [0,0,0,0];
+      soulsRows.forEach(function(r) {
+        var wk = r['Week'] || '';
+        var idx = ['Week 1','Week 2','Week 3','Week 4'].indexOf(wk);
+        if (idx >= 0) D.souls_w[idx] += parseInt(r['Souls Saved']) || 0;
       });
-      D.kpis.souls=D.souls_w.reduce((a,b)=>a+b,0);
+      D.kpis.souls = D.souls_w.reduce(function(a,b) { return a+b; }, 0);
     }
 
-    // ── Events ──
-    D.events=evRows.map(r=>({name:r['Event Name'],week:r['Week'],type:r['Event Type'],att:r['Attendance']}));
+    // Events
+    D.events = evRows.map(function(r) { return {name:r['Event Name'], week:r['Week'], type:r['Event Type'], att:r['Attendance']}; });
 
-    // ── Training ──
-    if(trnRows.length>0){
-      D.training.enrolled=trnRows.length;
-      D.training.active=trnRows.filter(r=>r['Status']==='Active').length;
-      D.training.done=trnRows.filter(r=>r['Status']==='Completed').length;
-      if(trnRows[0]) D.training.name=trnRows[0]['Training Name']||'';
+    // Training
+    if (trnRows.length > 0) {
+      D.training.enrolled = trnRows.length;
+      D.training.active = trnRows.filter(function(r) { return r['Status'] === 'Active'; }).length;
+      D.training.done = trnRows.filter(function(r) { return r['Status'] === 'Completed'; }).length;
+      if (trnRows[0]) D.training.name = trnRows[0]['Training Name'] || '';
     }
 
-    // ── Member Metrics ──
-    if(metricRows.length>0){
-      const last=metricRows[metricRows.length-1];
-      D.kpis.bap=parseInt(last['Baptisms'])||D.kpis.bap;
-      D.kpis.icu=parseInt(last['ICU Turned Around'])||D.kpis.icu;
+    // Member Metrics
+    if (metricRows.length > 0) {
+      var last = metricRows[metricRows.length - 1];
+      D.kpis.bap = parseInt(last['Baptisms']) || D.kpis.bap;
+      D.kpis.icu = parseInt(last['ICU Turned Around']) || D.kpis.icu;
     }
 
-    setSyncStatus('synced','Up to date');
-    toast('✓ All data refreshed from Google Sheets');
+    setSyncStatus('synced', 'Up to date');
+    toast('Data refreshed from Google Sheets');
     renderDashboard();
-
-  } catch(err) {
-    setSyncStatus('error','Refresh failed');
-    toast('⚠ Could not refresh: ' + err.message);
-  } finally {
+  })
+  .catch(function(err) {
+    setSyncStatus('error', 'Offline mode');
+    toast('Could not reach Google Sheets. Working offline.');
+  })
+  .finally(function() {
     hideLoading();
+  });
+}
+
+var V_TITLES = {
+  'dashboard':'Dashboard','insights':'AI Insights','bulk-upload':'Bulk Upload',
+  'entry-ft':'First Timers','entry-members':'Members and Tribes',
+  'entry-attendance':'Attendance','entry-growth':'Growth and Discipleship',
+  'entry-training':'Training and Events','report-tribes':'Tribe Reports','report-members':'Member Directory'
+};
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.getElementById('view-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n) {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) n.classList.add('active');
+  });
+  document.getElementById('topbar-title').textContent = V_TITLES[id] || 'Dashboard';
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'insights') generateInsights();
+  if (id === 'report-tribes') renderTribeReport();
+  if (id === 'report-members') renderDir();
+  if (id === 'entry-attendance') buildTribeAttForm();
+  if (id === 'bulk-upload') buildUploadHub();
+}
+
+function cycleMonth() {
+  D.monthIdx = (D.monthIdx + 1) % D.months.length;
+  D.month = D.months[D.monthIdx];
+  document.getElementById('month-disp').textContent = D.month;
+  var el = document.getElementById('ins-month');
+  if (el) el.textContent = D.month;
+}
+
+function renderDashboard() {
+  document.getElementById('k-ft').textContent = D.kpis.ft;
+  document.getElementById('k-nm').textContent = D.kpis.nm;
+  document.getElementById('k-souls').textContent = D.kpis.souls;
+  document.getElementById('k-icu').textContent = D.kpis.icu;
+  document.getElementById('k-2nd').textContent = D.kpis.s2nd;
+  document.getElementById('k-bap').textContent = D.kpis.bap;
+  document.getElementById('k-imm').textContent = D.kpis.imm;
+  document.getElementById('k-mclass').textContent = D.kpis.mclass;
+  renderAttChart();
+  renderFunnel();
+  renderSoulsChart();
+  renderGroupsDonut();
+  renderAttList('workers');
+  renderTribeGrid();
+  renderMembersTable();
+  renderFTTable();
+}
+
+function renderAttChart() {
+  var el = document.getElementById('att-chart');
+  if (!D.att.lbl.length) { el.innerHTML = '<div style="color:var(--text-mute);font-size:12px;margin:auto;">No data yet — enter attendance or use Bulk Upload</div>'; return; }
+  var max = Math.max.apply(null, D.att.mem.concat(D.att.wkr).concat([1]));
+  el.innerHTML = D.att.lbl.map(function(l, i) {
+    return '<div class="bar-wrap"><div style="display:flex;gap:2px;align-items:flex-end;width:100%;height:140px;"><div class="bar" style="background:var(--navy);height:' + (D.att.mem[i]/max*100) + '%;flex:1;"><div class="bar-tip">' + D.att.mem[i] + ' members</div></div><div class="bar" style="background:var(--gold);height:' + (D.att.wkr[i]/max*100) + '%;flex:1;"><div class="bar-tip">' + D.att.wkr[i] + ' workers</div></div></div><div class="bar-lbl">' + l + '</div></div>';
+  }).join('');
+}
+
+function renderFunnel() {
+  var el = document.getElementById('funnel');
+  var max = Math.max(D.funnel[0].n, 1);
+  el.innerHTML = D.funnel.map(function(f) {
+    return '<div class="funnel-item"><div class="funnel-row"><span style="color:var(--text-mid)">' + f.lbl + '</span><span style="font-family:DM Mono,monospace;font-size:11px;">' + f.n + ' (' + Math.round(f.n/max*100) + '%)</span></div><div class="prog-bar"><div class="prog-fill" style="background:' + f.c + ';width:' + (f.n/max*100) + '%"></div></div></div>';
+  }).join('');
+}
+
+function renderSoulsChart() {
+  var el = document.getElementById('souls-chart');
+  var max = Math.max.apply(null, D.souls_w.concat([1]));
+  el.innerHTML = D.souls_w.map(function(v, i) {
+    return '<div class="bar-wrap"><div class="bar" style="background:var(--gold);height:' + (v/max*100) + '%;width:100%;"><div class="bar-tip">' + v + ' souls</div></div><div class="bar-lbl">Wk ' + (i+1) + '</div></div>';
+  }).join('');
+}
+
+function renderGroupsDonut() {
+  var el = document.getElementById('groups-donut');
+  var total = Math.max(D.affinity.reduce(function(s,g) { return s+g.n; }, 0), 1);
+  var off = 0;
+  var r = 42, cx = 55, cy = 55, circ = 2 * Math.PI * r;
+  var slices = D.affinity.map(function(g) {
+    var pct = g.n / total;
+    var dash = pct * circ;
+    var s = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + g.c + '" stroke-width="16" stroke-dasharray="' + dash + ' ' + circ + '" stroke-dashoffset="' + (-off*circ) + '" style="transform:rotate(-90deg);transform-origin:' + cx + 'px ' + cy + 'px"/>';
+    off += pct;
+    return s;
+  }).join('');
+  el.innerHTML = '<svg class="donut-svg" viewBox="0 0 110 110">' + slices + '</svg><div class="donut-leg"><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:var(--text-mute);margin-bottom:3px;">AFFINITY</div>' +
+    D.affinity.map(function(g) { return '<div class="donut-item"><div class="donut-dot" style="background:' + g.c + '"></div>' + g.lbl + '<span class="donut-pct">' + g.n + '</span></div>'; }).join('') +
+    '<div style="font-size:9px;font-weight:700;text-transform:uppercase;color:var(--text-mute);margin:5px 0 3px;">INTEREST</div>' +
+    D.interest.map(function(g) { return '<div class="donut-item"><div class="donut-dot" style="background:' + g.c + '"></div>' + g.lbl + '<span class="donut-pct">' + g.n + '</span></div>'; }).join('') +
+    '</div>';
+}
+
+var curTab = 'workers';
+function switchAttTab(btn, tab) {
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  curTab = tab;
+  renderAttList(tab);
+}
+
+function renderAttList(tab) {
+  var data = tab === 'workers' ? D.workers : D.membersAtt;
+  var el = document.getElementById('att-list');
+  if (!data.length) { el.innerHTML = '<div style="color:var(--text-mute);font-size:12px;padding:8px;">No data yet — upload individual attendance data</div>'; return; }
+  el.innerHTML = data.map(function(d) {
+    var c = d.att >= 90 ? 'var(--green)' : d.att >= 70 ? 'var(--gold)' : 'var(--red)';
+    return '<div class="att-item"><div class="att-name">' + d.name + '</div><div class="att-bar-wrap"><div class="prog-bar"><div class="prog-fill" style="background:' + c + ';width:' + d.att + '%"></div></div></div><div class="att-pct">' + d.att + '%</div></div>';
+  }).join('');
+}
+
+function renderTribeGrid() {
+  document.getElementById('tribe-grid').innerHTML = D.tribes.map(function(t) {
+    var sc = t.status === 'Growing' ? 'active' : t.status === 'ICU Watch' ? 'pending' : 'inactive';
+    var c = t.status === 'Growing' ? 'var(--green)' : t.status === 'ICU Watch' ? 'var(--orange)' : 'var(--blue)';
+    return '<div class="tribe-card"><div class="tribe-name">' + t.name + '<span class="badge ' + sc + '">' + t.status + '</span></div><div class="tribe-stat"><span>Members</span><span>' + t.mem + '</span></div><div class="tribe-stat"><span>Avg Attendance</span><span>' + t.att + '%</span></div><div class="prog-bar" style="margin:5px 0;"><div class="prog-fill" style="background:' + c + ';width:' + t.att + '%"></div></div><div class="tribe-stat"><span>MoM Growth</span><span style="color:' + (t.growth >= 0 ? 'var(--green)' : 'var(--red)') + ';">' + (t.growth >= 0 ? '+' : '') + t.growth + '%</span></div></div>';
+  }).join('');
+}
+
+function renderMembersTable(filter) {
+  filter = filter || '';
+  var data = D.newMembers.filter(function(m) { return !filter || m.name.toLowerCase().includes(filter.toLowerCase()); });
+  document.getElementById('m-tbody').innerHTML = data.length ? data.map(function(m) {
+    var sc = m.status === 'Active' ? 'active' : m.status === 'ICU' ? 'pending' : 'inactive';
+    return '<tr><td><strong>' + m.name + '</strong></td><td>' + m.joined + '</td><td>' + m.tribe + '</td><td><span class="badge ' + sc + '">' + m.status + '</span></td><td>' + m.bap + '</td><td><span class="badge ' + (m.disc === 'Yes' ? 'active' : m.disc === 'In Progress' ? 'b-gold' : 'inactive') + '">' + m.disc + '</span></td></tr>';
+  }).join('') : '<tr><td colspan="6" style="color:var(--text-mute);text-align:center;padding:20px;">No members yet</td></tr>';
+}
+function filterMembers() { renderMembersTable(document.getElementById('m-search').value); }
+
+function renderFTTable() {
+  document.getElementById('ft-tbody').innerHTML = D.firstTimers.length ? D.firstTimers.map(function(f) {
+    var sc = f.stage === 'New Member' ? 'active' : f.stage === 'Membership Class' ? 'b-blue' : f.stage === 'Second Timer' ? 'b-gold' : 'inactive';
+    return '<tr><td><strong>' + f.name + '</strong></td><td>' + f.date + '</td><td><span class="badge ' + (f.yes === 'Yes' ? 'active' : f.yes === 'No' ? 'inactive' : 'pending') + '">' + f.yes + '</span></td><td><span class="badge ' + sc + '">' + f.stage + '</span></td><td>' + f.cls + '</td><td>' + f.fu + '</td></tr>';
+  }).join('') : '<tr><td colspan="6" style="color:var(--text-mute);text-align:center;padding:20px;">No first timers yet</td></tr>';
+}
+
+function generateInsights() {
+  document.getElementById('ins-month').textContent = D.month;
+  var conv = D.kpis.ft > 0 ? Math.round(D.kpis.nm / D.kpis.ft * 100) : 0;
+  var topT = D.tribes.slice().sort(function(a,b) { return b.growth - a.growth; })[0];
+  var watchT = D.tribes.slice().sort(function(a,b) { return a.att - b.att; })[0];
+  var avgAtt = Math.round(D.tribes.reduce(function(s,t) { return s + t.att; }, 0) / D.tribes.length) || 0;
+
+  var insights = [
+    {type:'pos', tag:'Conversion', title: conv + '% First-Timer Conversion', text: 'Out of ' + D.kpis.ft + ' first timers, ' + D.kpis.nm + ' became members. ' + (conv >= 40 ? 'Strong — the follow-up process is working.' : 'Room to tighten first-timer follow-up.')},
+    {type: D.kpis.souls >= 10 ? 'pos' : 'warn', tag:'Evangelism', title: D.kpis.souls + ' Souls Saved', text: D.kpis.souls + ' decisions this month. Connect every saved soul to discipleship within 2 weeks.'},
+    {type:'neu', tag:'Tribe Leader', title: topT.name + ' Leads Growth', text: topT.name + ' leads with ' + topT.mem + ' members and ' + topT.att + '% avg attendance. Study and replicate what is working.'},
+    {type:'warn', tag:'Needs Attention', title: watchT.name + ' Lowest Attendance (' + watchT.att + '%)', text: 'Below church average of ' + avgAtt + '%. Recommend a pastoral check-in before month end.'},
+    {type:'pos', tag:'Immerse', title: D.kpis.imm + ' at Friday Immerse', text: 'Strong mid-week engagement. Keep nurturing Immerse as a key discipleship touchpoint.'},
+    {type: D.kpis.bap >= 6 ? 'pos' : 'neu', tag:'Baptisms', title: D.kpis.bap + ' Baptisms', text: 'Celebrate publicly in next Sunday service to inspire others.'},
+    {type: D.kpis.icu >= 4 ? 'pos' : 'alert', tag:'ICU Turnaround', title: D.kpis.icu + ' ICU Members Reactivated', text: 'Keep following up remaining ICU members systematically through tribe leaders.'},
+    {type:'neu', tag:'Training', title: (D.training.total > 0 ? Math.round(D.training.enrolled / D.training.total * 100) : 0) + '% of Members in Training', text: D.training.enrolled + ' enrolled, ' + D.training.done + ' completed. Target: 30% of membership by Q3.'}
+  ];
+
+  document.getElementById('ins-grid').innerHTML = insights.map(function(i) {
+    return '<div class="ins-card ' + i.type + '"><div class="ins-tag ' + i.type + '">' + i.tag + '</div><div class="ins-title">' + i.title + '</div><div class="ins-text">' + i.text + '</div></div>';
+  }).join('');
+
+  var actions = [
+    {ico:'📞', text:'Follow up with ' + Math.max(0, D.kpis.ft - D.kpis.nm) + ' first timers still in the pipeline who have not converted.'},
+    {ico:'🏘', text:'Schedule a pastoral check-in with ' + watchT.name + ' tribe leader this week.'},
+    {ico:'📚', text:'Enrol remaining saved souls into discipleship — 100% connection within 2 weeks.'},
+    {ico:'🎉', text:'Celebrate ' + D.kpis.bap + ' baptisms and ' + D.kpis.icu + ' ICU turnarounds publicly next Sunday.'},
+    {ico:'📊', text: D.kpis.s2nd + ' second timers this month — target 60% into membership class.'}
+  ];
+  document.getElementById('action-list').innerHTML = actions.map(function(a) {
+    return '<div class="action-item"><span style="font-size:15px">' + a.ico + '</span><span style="color:var(--text-mid);font-size:12px;">' + a.text + '</span></div>';
+  }).join('');
+}
+
+function renderTribeReport() {
+  var total = D.tribes.reduce(function(s,t) { return s + t.mem; }, 0);
+  var avg = Math.round(D.tribes.reduce(function(s,t) { return s + t.att; }, 0) / D.tribes.length) || 0;
+  document.getElementById('tribe-kpis').innerHTML =
+    '<div class="kpi-card ck-gold"><div class="kpi-label">Total Tribe Members</div><div class="kpi-val">' + total + '</div></div>' +
+    '<div class="kpi-card ck-green"><div class="kpi-label">Avg Tribe Attendance</div><div class="kpi-val">' + avg + '%</div></div>' +
+    '<div class="kpi-card ck-blue"><div class="kpi-label">Tribes Growing</div><div class="kpi-val">' + D.tribes.filter(function(t) { return t.growth > 0; }).length + '/' + D.tribes.length + '</div></div>';
+  var max = Math.max.apply(null, D.tribes.map(function(t) { return t.mem; }).concat([1]));
+  document.getElementById('tribe-chart').innerHTML = D.tribes.map(function(t) {
+    var c = t.growth > 0 ? 'var(--green)' : t.growth < 0 ? 'var(--red)' : 'var(--gold)';
+    return '<div class="bar-wrap"><div class="bar" style="background:' + c + ';height:' + (t.mem/max*100) + '%;width:100%;"><div class="bar-tip">' + t.mem + ' members</div></div><div class="bar-lbl" style="font-size:9px;">' + t.name.split(' ')[1] + '</div></div>';
+  }).join('');
+  document.getElementById('tribe-tbody').innerHTML = D.tribes.map(function(t) {
+    var sc = t.status === 'Growing' ? 'active' : t.status === 'ICU Watch' ? 'pending' : 'inactive';
+    return '<tr><td><strong>' + t.name + '</strong></td><td>' + t.mem + '</td><td>' + t.att + '%</td><td style="color:' + (t.growth >= 0 ? 'var(--green)' : 'var(--red)') + ';">' + (t.growth >= 0 ? '+' : '') + t.growth + '%</td><td><span class="badge ' + sc + '">' + t.status + '</span></td></tr>';
+  }).join('');
+}
+
+function renderDir(filter) {
+  filter = filter || '';
+  var data = filter ? D.newMembers.filter(function(m) { return m.name.toLowerCase().includes(filter.toLowerCase()); }) : D.newMembers;
+  document.getElementById('dir-tbody').innerHTML = data.length ? data.map(function(m) {
+    var sc = m.status === 'Active' ? 'active' : m.status === 'ICU' ? 'pending' : 'inactive';
+    var attObj = D.membersAtt.find(function(a) { return a.name.toLowerCase() === m.name.toLowerCase(); });
+    return '<tr><td><strong>' + m.name + '</strong></td><td>' + m.tribe + '</td><td><span class="badge ' + sc + '">' + m.status + '</span></td><td>' + (m.aff||'—') + '</td><td>' + (m.int||'—') + '</td><td>' + (attObj ? attObj.att + '%' : '—') + '</td><td>—</td></tr>';
+  }).join('') : '<tr><td colspan="7" style="color:var(--text-mute);text-align:center;padding:20px;">No members yet</td></tr>';
+}
+function filterDir() { renderDir(document.getElementById('dir-search').value); }
+
+function buildTribeAttForm() {
+  document.getElementById('tribe-att-form').innerHTML = D.tribes.map(function(t) {
+    return '<div class="form-row"><label class="form-lbl">' + t.name + '</label><input class="form-inp" type="number" placeholder="Members present" id="ta-' + t.name.replace(/\s+/g,'_') + '"></div>';
+  }).join('');
+}
+
+function previewKPIs() {
+  var ft = parseInt(document.getElementById('s-ft').value) || 0;
+  var yes = parseInt(document.getElementById('s-ft-yes').value) || 0;
+  var conv = ft > 0 ? Math.round(yes/ft*100) : 0;
+  document.getElementById('ft-preview').innerHTML = ft > 0 ? yes + ' said yes from ' + ft + ' = ' + conv + '% commitment rate' : 'Enter values to see preview.';
+}
+function previewAttTotal() {
+  var m = parseInt(document.getElementById('sv-mem').value) || 0;
+  var w = parseInt(document.getElementById('sv-wkr').value) || 0;
+  var t = m + w;
+  if (t > 0) { document.getElementById('sv-total').value = t; document.getElementById('att-preview').innerHTML = 'Auto total: ' + m + ' + ' + w + ' = ' + t; }
+}
+function previewIndAtt() {
+  var a = parseInt(document.getElementById('ind-att').value) || 0;
+  var t = parseInt(document.getElementById('ind-tot').value) || 0;
+  document.getElementById('ind-preview').innerHTML = t > 0 ? 'Attendance: ' + Math.round(a/t*100) + '%' : 'Enter both values to see %.';
+}
+function previewRatio() {
+  var nm = parseInt(document.getElementById('nm-mo').value) || 0;
+  var gs = parseInt(document.getElementById('gs-mo').value) || 0;
+  var nmy = parseInt(document.getElementById('nm-ytd').value) || 0;
+  var gsy = parseInt(document.getElementById('gs-ytd').value) || 0;
+  document.getElementById('ratio-preview').innerHTML = 'Month: ' + nm + '/' + gs + ' = ' + (gs > 0 ? Math.round(nm/gs*100) : 0) + '% | YTD: ' + nmy + '/' + gsy + ' = ' + (gsy > 0 ? Math.round(nmy/gsy*100) : 0) + '%';
+}
+function previewTraining() {
+  var e = parseInt(document.getElementById('trn-enr').value) || 0;
+  var t = parseInt(document.getElementById('trn-memtot').value) || 0;
+  document.getElementById('trn-preview').innerHTML = t > 0 ? Math.round(e/t*100) + '% of membership enrolled or completed.' : 'Enter enrolled and total to see %.';
+}
+
+function setBtnLoading(id, loading) {
+  var btn = document.getElementById(id);
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.textContent = loading ? 'Saving…' : '✓ Save to Google Sheets';
+}
+
+function saveFirstTimer() {
+  var name = document.getElementById('ft-name').value.trim();
+  if (!name) { toast('Please enter a name'); return; }
+  setBtnLoading('btn-save-ft', true);
+  var row = [name, document.getElementById('ft-date').value || new Date().toISOString().split('T')[0], document.getElementById('ft-yes').value || 'Undecided', document.getElementById('ft-stage').value || 'First Timer', 'Not yet', document.getElementById('ft-owner').value || '—', document.getElementById('ft-phone').value || ''];
+  writeToSheet('FirstTimers', [row]).then(function(ok) {
+    if (ok) { D.firstTimers.push({name:name,date:row[1],yes:row[2],stage:row[3],cls:row[4],fu:row[5]}); D.kpis.ft++; document.getElementById('ft-name').value = ''; renderDashboard(); toast('First timer saved to Google Sheets'); }
+    setBtnLoading('btn-save-ft', false);
+  });
+}
+
+function saveFTSummary() {
+  var ft = document.getElementById('s-ft').value;
+  var n2 = document.getElementById('s-2nd').value;
+  var mc = document.getElementById('s-ftclass').value;
+  var mo = document.getElementById('s-month').value;
+  setBtnLoading('btn-save-ftsummary', true);
+  writeToSheet('FTSummary', [[mo, ft||'0', document.getElementById('s-ft-yes').value||'0', n2||'0', mc||'0']]).then(function(ok) {
+    if (ok) { if (ft) D.kpis.ft = parseInt(ft); if (n2) D.kpis.s2nd = parseInt(n2); if (mc) D.kpis.mclass = parseInt(mc); renderDashboard(); toast('Monthly summary saved'); }
+    setBtnLoading('btn-save-ftsummary', false);
+  });
+}
+
+function saveMember() {
+  var name = document.getElementById('m-name').value.trim();
+  if (!name) { toast('Please enter a name'); return; }
+  setBtnLoading('btn-save-member', true);
+  var row = [name, document.getElementById('m-joined').value || new Date().toISOString().split('T')[0], document.getElementById('m-tribe').value || 'Unassigned', document.getElementById('m-status').value, document.getElementById('m-bap').value, document.getElementById('m-disc').value, document.getElementById('m-affinity').value || '', document.getElementById('m-interest').value || ''];
+  writeToSheet('Members', [row]).then(function(ok) {
+    if (ok) { D.newMembers.push({name:name,joined:row[1],tribe:row[2],status:row[3],bap:row[4],disc:row[5]}); D.kpis.nm++; document.getElementById('m-name').value = ''; renderDashboard(); toast('Member saved to Google Sheets'); }
+    setBtnLoading('btn-save-member', false);
+  });
+}
+
+function saveMemberMetrics() {
+  setBtnLoading('btn-save-metrics', true);
+  var row = [document.getElementById('mm-month').value, document.getElementById('mm-bap').value||'0', document.getElementById('mm-icu').value||'0', document.getElementById('mm-trans').value||'0', document.getElementById('mm-left').value||'0', document.getElementById('rel-lag').value||'0', document.getElementById('rel-out').value||'0', document.getElementById('rel-ng').value||'0'];
+  writeToSheet('MemberMetrics', [row]).then(function(ok) {
+    if (ok) { var b = parseInt(row[1]), ic = parseInt(row[2]); if (b) D.kpis.bap = b; if (ic) D.kpis.icu = ic; renderDashboard(); toast('Member metrics saved'); }
+    setBtnLoading('btn-save-metrics', false);
+  });
+}
+
+function saveAttendance() {
+  setBtnLoading('btn-save-att', true);
+  var m = document.getElementById('sv-mem').value || '0';
+  var w = document.getElementById('sv-wkr').value || '0';
+  var row = [document.getElementById('sv-date').value || new Date().toISOString().split('T')[0], m, w, String(parseInt(m)+parseInt(w)), document.getElementById('imm-cnt').value || '0'];
+  writeToSheet('Attendance', [row]).then(function(ok) {
+    if (ok) toast('Attendance saved to Google Sheets');
+    setBtnLoading('btn-save-att', false);
+  });
+}
+
+function saveTribeAtt() {
+  setBtnLoading('btn-save-tribeatt', true);
+  var date = document.getElementById('tribe-att-date').value || new Date().toISOString().split('T')[0];
+  var rows = [];
+  D.tribes.forEach(function(t) {
+    var el = document.getElementById('ta-' + t.name.replace(/\s+/g,'_'));
+    var present = el ? parseInt(el.value) || 0 : 0;
+    if (present > 0) { var pct = t.mem > 0 ? Math.round(present/t.mem*100) : 0; rows.push([t.name, date, String(present), String(t.mem), String(pct)]); }
+  });
+  if (!rows.length) { toast('Enter at least one tribe attendance'); setBtnLoading('btn-save-tribeatt', false); return; }
+  writeToSheet('TribeAttendance', rows).then(function(ok) {
+    if (ok) toast('Tribe attendance saved');
+    setBtnLoading('btn-save-tribeatt', false);
+  });
+}
+
+function saveIndAtt() {
+  var name = document.getElementById('ind-name').value.trim();
+  var att = parseInt(document.getElementById('ind-att').value);
+  var tot = parseInt(document.getElementById('ind-tot').value);
+  if (!name || !tot) { toast('Fill in all fields'); return; }
+  setBtnLoading('btn-save-indatt', true);
+  var pct = Math.min(100, Math.round(att/tot*100));
+  var role = document.getElementById('ind-role').value;
+  writeToSheet('IndAttendance', [[name, role, String(att), String(tot), String(pct)]]).then(function(ok) {
+    if (ok) {
+      var arr = role.includes('Worker') ? D.workers : D.membersAtt;
+      var ex = arr.find(function(x) { return x.name.toLowerCase() === name.toLowerCase(); });
+      if (ex) { ex.att = pct; } else { arr.push({name:name, att:pct}); }
+      document.getElementById('ind-name').value = '';
+      renderAttList(curTab);
+      toast(name + ' — ' + pct + '% saved');
+    }
+    setBtnLoading('btn-save-indatt', false);
+  });
+}
+
+function saveSouls() {
+  setBtnLoading('btn-save-souls', true);
+  var wk = document.getElementById('souls-wk').value;
+  var cnt = document.getElementById('souls-cnt').value || '0';
+  writeToSheet('SoulsSaved', [[wk, cnt, document.getElementById('souls-disc').value||'0', new Date().toISOString().split('T')[0]]]).then(function(ok) {
+    if (ok) {
+      var idx = ['Week 1','Week 2','Week 3','Week 4'].indexOf(wk);
+      if (idx >= 0) D.souls_w[idx] = parseInt(cnt);
+      D.kpis.souls = D.souls_w.reduce(function(a,b) { return a+b; }, 0);
+      renderDashboard();
+      toast('Souls data saved');
+    }
+    setBtnLoading('btn-save-souls', false);
+  });
+}
+
+function saveRatio() {
+  setBtnLoading('btn-save-ratio', true);
+  var row = [D.month, document.getElementById('nm-mo').value||'0', document.getElementById('gs-mo').value||'0', document.getElementById('nm-ytd').value||'0', document.getElementById('gs-ytd').value||'0'];
+  writeToSheet('GuestRatio', [row]).then(function(ok) {
+    if (ok) toast('Guest/member ratios saved');
+    setBtnLoading('btn-save-ratio', false);
+  });
+}
+
+function saveTraining() {
+  setBtnLoading('btn-save-trn', true);
+  var name = document.getElementById('trn-name').value || 'Training';
+  var enrolled = parseInt(document.getElementById('trn-enr').value) || 0;
+  var active = parseInt(document.getElementById('trn-act').value) || 0;
+  var done = parseInt(document.getElementById('trn-done').value) || 0;
+  var rows = [];
+  for (var i = 0; i < done; i++) rows.push([name, 'Participant ' + (i+1), 'Completed', new Date().toISOString().split('T')[0]]);
+  for (var j = 0; j < active; j++) rows.push([name, 'Participant ' + (done+j+1), 'Active', new Date().toISOString().split('T')[0]]);
+  for (var k = 0; k < (enrolled-done-active); k++) rows.push([name, 'Participant ' + (done+active+k+1), 'Enrolled', new Date().toISOString().split('T')[0]]);
+  if (rows.length > 0) {
+    writeToSheet('Training', rows, 'append').then(function(ok) {
+      if (ok) { D.training = {name:name, enrolled:enrolled, active:active, done:done, total:parseInt(document.getElementById('trn-memtot').value)||D.training.total}; toast('Training data saved'); }
+      setBtnLoading('btn-save-trn', false);
+    });
+  } else {
+    toast('Enter at least one training record');
+    setBtnLoading('btn-save-trn', false);
   }
 }
 
-// ══════════════════════════════════════════════
-//  SYNC STATUS INDICATOR
-// ══════════════════════════════════════════════
-function setSyncStatus(state, label) {
-  const dot=document.getElementById('sync-dot');
-  const lbl=document.getElementById('sync-label');
-  dot.className='sync-dot '+state;
-  lbl.textContent=label;
-}
-
-// ══════════════════════════════════════════════
-//  LOADING OVERLAY
-// ══════════════════════════════════════════════
-function showLoading(text='Saving…', sub='') {
-  document.getElementById('loading-text').textContent=text;
-  document.getElementById('loading-sub').textContent=sub;
-  document.getElementById('loading').classList.add('show');
-}
-function hideLoading() { document.getElementById('loading').classList.remove('show'); }
-
-// ══════════════════════════════════════════════
-//  TOAST
-// ══════════════════════════════════════════════
-function toast(msg) {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3200);
-}
-
-// ══════════════════════════════════════════════
-//  NAV
-// ══════════════════════════════════════════════
-const V_TITLES={'dashboard':'Dashboard','insights':'AI Insights','bulk-upload':'Bulk Upload','entry-ft':'First Timers','entry-members':'Members & Tribes','entry-attendance':'Attendance','entry-growth':'Growth & Discipleship','entry-training':'Training & Events','report-tribes':'Tribe Reports','report-members':'Member Directory'};
-function showView(id) {
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('view-'+id).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active');});
-  document.getElementById('topbar-title').textContent=V_TITLES[id]||'Dashboard';
-  if(id==='dashboard') renderDashboard();
-  if(id==='insights') generateInsights();
-  if(id==='report-tribes') renderTribeReport();
-  if(id==='report-members') renderDir();
-  if(id==='entry-attendance') buildTribeAttForm();
-  if(id==='bulk-upload') buildUploadHub();
-}
-function cycleMonth() {
-  D.monthIdx=(D.monthIdx+1)%D.months.length; D.month=D.months[D.monthIdx];
-  document.getElementById('month-disp').textContent=D.month;
-  const el=document.getElementById('ins-month'); if(el) el.textContent=D.month;
-}
-
-// ══════════════════════════════════════════════
-//  DASHBOARD RENDERS
-// ══════════════════════════════════════════════
-function renderDashboard() {
-  ['ft','nm','souls','icu','2nd','bap','imm','mclass'].forEach(k=>{
-    const el=document.getElementById('k-'+k);
-    if(el) el.textContent=D.kpis[k]||0;
+function addEvent() {
+  var name = document.getElementById('ev-name').value.trim();
+  if (!name) { toast('Enter an event name'); return; }
+  setBtnLoading('btn-save-ev', true);
+  var row = [name, document.getElementById('ev-wk').value, document.getElementById('ev-type').value, document.getElementById('ev-att').value||'0', new Date().toISOString().split('T')[0]];
+  writeToSheet('Events', [row]).then(function(ok) {
+    if (ok) {
+      D.events.push({name:name, week:row[1], type:row[2], att:row[3]});
+      document.getElementById('ev-list').innerHTML = D.events.map(function(e) { return '<div style="background:var(--cream);border-radius:6px;padding:7px 11px;font-size:11.5px;margin-bottom:5px;"><strong>' + e.week + '</strong> — ' + e.name + ' (' + e.type + ') · ' + e.att + ' attended</div>'; }).join('');
+      document.getElementById('ev-name').value = '';
+      toast('Event saved to Google Sheets');
+    }
+    setBtnLoading('btn-save-ev', false);
   });
-  renderAttChart(); renderFunnel(); renderSoulsChart();
-  renderGroupsDonut(); renderAttList('workers');
-  renderTribeGrid(); renderMembersTable(); renderFTTable();
 }
-function renderAttChart() {
-  const el=document.getElementById('att-chart');
-  if(!D.att.lbl.length){el.innerHTML='<div style="color:var(--text-mute);font-size:12px;margin:auto;">No attendance data yet — upload or enter data</div>';return;}
-  const max=Math.max(...D.att.mem,...D.att.wkr,1);
-  el.innerHTML=D.att.lbl.map((l,i)=>`
-    <div class="bar-wrap">
-      <div style="display:flex;gap:2px;align-items:flex-end;width:100%;height:140px;">
-        <div class="bar" style="background:var(--navy);height:${D.att.mem[i]/max*100}%;flex:1;"><div class="bar-tip">${D.att.mem[i]} members</div></div>
-        <div class="bar" style="background:var(--gold);height:${D.att.wkr[i]/max*100}%;flex:1;"><div class="bar-tip">${D.att.wkr[i]} workers</div></div>
-      </div><div class="bar-lbl">${l}</div></div>`).join('');
-}
-function renderFunnel() {
-  const el=document.getElementById('funnel');
-  const max=Math.max(D.funnel[0].n,1);
-  el.innerHTML=D.funnel.map(f=>`
-    <div class="funnel-item">
-      <div class="funnel-row"><span style="color:var(--text-mid)">${f.lbl}</span><span style="font-family:'DM Mono',monospace;font-size:11px;">${f.n} <span style="color:var(--text-mute)">(${Math.round(f.n/max*100)}%)</span></span></div>
-      <div class="prog-bar"><div class="prog-fill" style="background:${f.c};width:${f.n/max*100}%"></div></div>
-    </div>`).join('');
-}
-function renderSoulsChart() {
-  const el=document.getElementById('souls-chart');
-  const max=Math.max(...D.souls_w,1);
-  el.innerHTML=D.souls_w.map((v,i)=>`
-    <div class="bar-wrap">
-      <div class="bar" style="background:var(--gold);height:${v/max*100}%;width:100%;"><div class="bar-tip">${v} souls</div></div>
-      <div class="bar-lbl">Wk ${i+1}</div></div>`).join('');
-}
-function renderGroupsDonut() {
-  const el=document.getElementById('groups-donut');
-  const all=[...D.affinity]; const total=Math.max(all.reduce((s,g)=>s+g.n,0),1);
-  let off=0; const r=42,cx=55,cy=55,circ=2*Math.PI*r;
-  const slices=all.map(g=>{const pct=g.n/total;const dash=pct*circ;const s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${g.c}" stroke-width="16" stroke-dasharray="${dash} ${circ}" stroke-dashoffset="${-off*circ}" style="transform:rotate(-90deg);transform-origin:${cx}px ${cy}px"/>`;off+=pct;return s;}).join('');
-  el.innerHTML=`<svg class="donut-svg" viewBox="0 0 110 110">${slices}</svg>
-    <div class="donut-leg">
-      <div style="font-size:9px;font-weight:700;text-transform:uppercase;color:var(--text-mute);margin-bottom:3px;">AFFINITY</div>
-      ${D.affinity.map(g=>`<div class="donut-item"><div class="donut-dot" style="background:${g.c}"></div>${g.lbl}<span class="donut-pct">${g.n}</span></div>`).join('')}
-      <div style="font-size:9px;font-weight:700;text-transform:uppercase;color:var(--text-mute);margin:5px 0 3px;">INTEREST</div>
-      ${D.interest.map(g=>`<div class="donut-item"><div class="donut-dot" style="background:${g.c}"></div>${g.lbl}<span class="donut-pct">${g.n}</span></div>`).join('')}
-    </div>`;
-}
-let curTab='workers';
-function switchAttTab(btn,tab){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');curTab=tab;renderAttList(tab);}
-function renderAttList(tab) {
-  const data=tab==='workers'?D.workers:D.membersAtt;
-  const el=document.getElementById('att-list');
-  if(!data.length){el.innerHTML='<div style="color:var(--text-mute);font-size:12px;padding:8px;">No data yet — upload individual attendance data</div>';return;}
-  el.innerHTML=data.map(d=>{const c=d.att>=90?'var(--green)':d.att>=70?'var(--gold)':'var(--red)';return `<div class="att-item"><div class="att-name">${d.name}</div><div class="att-bar-wrap"><div class="prog-bar"><div class="prog-fill" style="background:${c};width:${d.att}%"></div></div></div><div class="att-pct">${d.att}%</div></div>`;}).join('');
-}
-function renderTribeGrid() {
-  document.getElementById('tribe-grid').innerHTML=D.tribes.map(t=>{
-    const sc=t.status==='Growing'?'active':t.status==='ICU Watch'?'pending':'inactive';
-    const c=t.status==='Growing'?'var(--green)':t.status==='ICU Watch'?'var(--orange)':'var(--blue)';
-    return `<div class="tribe-card"><div class="tribe-name">${t.name}<span class="badge ${sc}">${t.status}</span></div>
-      <div class="tribe-stat"><span>Members</span><span>${t.mem}</span></div>
-      <div class="tribe-stat"><span>Avg Attendance</span><span>${t.att}%</span></div>
-      <div class="prog-bar" style="margin:5px 0;"><div class="prog-fill" style="background:${c};width:${t.att}%"></div></div>
-      <div class="tribe-stat"><span>MoM Growth</span><span style="color:${t.growth>=0?'var(--green)':'var(--red)'};">${t.growth>=0?'+':''}${t.growth}%</span></div></div>`;
+
+// BULK UPLOAD
+var UPLOAD_CARDS = [
+  {type:'ft',icon:'🙋',title:'First Timers',sub:'Name, Date, Said Yes, Stage, Follow-up Owner, Phone',sheet:'FirstTimers'},
+  {type:'members',icon:'👥',title:'Members and Tribes',sub:'Name, Date Joined, Tribe, Status, Baptised, Discipleship, Affinity, Interest',sheet:'Members'},
+  {type:'attendance',icon:'📋',title:'Service Attendance',sub:'Date, Members Present, Workers Present, Total, Immerse Attendance',sheet:'Attendance'},
+  {type:'indatt',icon:'👤',title:'Individual Attendance',sub:'Name, Role, Services Attended, Total Services',sheet:'IndAttendance'},
+  {type:'tribe',icon:'🏘',title:'Tribe Attendance',sub:'Tribe Name, Meeting Date, Members Present, Total Members',sheet:'TribeAttendance'},
+  {type:'souls',icon:'✝️',title:'Souls Saved',sub:'Week, Souls Saved, Joined Discipleship, Service Date',sheet:'SoulsSaved'},
+  {type:'training',icon:'🎓',title:'Training Records',sub:'Training Name, Member Name, Status, Start Date',sheet:'Training'},
+  {type:'events',icon:'🎉',title:'Community Events',sub:'Event Name, Week, Event Type, Attendance, Date',sheet:'Events'}
+];
+
+var UPLOAD_TEMPLATES = {
+  ft:{headers:['Name','Date','Said Yes (Yes/No/Undecided)','Stage','Follow-up Owner','Phone'],sample:[['Tolu Adeyemi','2026-06-01','Yes','First Timer','Seun','08012345678']]},
+  members:{headers:['Name','Date Joined','Tribe','Status','Baptised (Yes/No)','Discipleship (Yes/No/In Progress)','Affinity Group','Interest Group'],sample:[['Chidinma Okafor','2026-06-01','Tribe Alpha','Active','Yes','In Progress','Ladies','Finance']]},
+  attendance:{headers:['Date','Members Present','Workers Present','Total Attendance','Immerse Attendance'],sample:[['2026-06-01','170','44','214','58']]},
+  indatt:{headers:['Name','Role (Worker/Member)','Services Attended','Total Services This Month'],sample:[['Tolu Adeyemi','Worker','4','4']]},
+  tribe:{headers:['Tribe Name','Meeting Date','Members Present','Total Members'],sample:[['Tribe Alpha','2026-06-07','34','42']]},
+  souls:{headers:['Week (Week 1-4)','Souls Saved','Joined Discipleship Class','Service Date'],sample:[['Week 1','3','2','2026-06-01']]},
+  training:{headers:['Training Name','Member Name','Status (Enrolled/Active/Completed)','Start Date'],sample:[['Leadership Foundations','Tolu Adeyemi','Completed','2026-03-01']]},
+  events:{headers:['Event Name','Week (Week 1-4)','Event Type','Attendance','Date'],sample:[['Community Dinner','Week 1','Social','45','2026-06-04']]}
+};
+
+var PENDING_UPLOADS = {};
+
+function buildUploadHub() {
+  document.getElementById('upload-hub-grid').innerHTML = UPLOAD_CARDS.map(function(c) {
+    return '<div class="upload-card"><div class="upload-card-title">' + c.icon + ' ' + c.title + '</div><div class="upload-card-sub">' + c.sub + '</div><div class="drop-zone" id="dz-' + c.type + '" ondragover="dzDrag(event,\'dz-' + c.type + '\')" ondragleave="dzLeave(\'dz-' + c.type + '\')" ondrop="dzDrop(event,\'' + c.type + '\')"><input type="file" accept=".xlsx,.xls,.csv" onchange="handleUpload(event,\'' + c.type + '\')"><div class="drop-icon">' + c.icon + '</div><div class="drop-text">Drop file here or click to browse</div><div class="drop-hint">.xlsx or .csv</div></div><div class="upload-preview" id="prev-' + c.type + '"></div><div class="upload-actions"><button class="btn-template" onclick="downloadTemplate(\'' + c.type + '\')">Download Template</button><button class="btn-confirm" id="btn-up-' + c.type + '" disabled onclick="confirmBulkUpload(\'' + c.type + '\',\'' + c.sheet + '\')">Import to Sheets</button></div></div>';
   }).join('');
 }
-function renderMembersTable(filter='') {
-  const data=D.newMembers.filter(m=>!filter||m.name.toLowerCase().includes(filter.toLowerCase()));
-  document.getElementById('m-tbody').innerHTML=data.length?data.map(m=>{
-    const sc=m.status==='Active'?'active':m.status==='ICU'?'pending':'inactive';
-    return `<tr><td><strong>${m.name}</strong></td><td>${m.joined}</td><td>${m.tribe}</td><td><span class="badge ${sc}">${m.status}</span></td><td>${m.bap}</td><td><span class="badge ${m.disc==='Yes'?'active':m.disc==='In Progress'?'b-gold':'inactive'}">${m.disc}</span></td></tr>`;
-  }).join(''):'<tr><td colspan="6" style="color:var(--text-mute);text-align:center;padding:20px;">No members yet — add individually or use Bulk Upload</td></tr>';
-}
-function filterMembers(){renderMembersTable(document.getElementById('m-search').value);}
-function renderFTTable() {
-  document.getElementById('ft-tbody').innerHTML=D.firstTimers.length?D.firstTimers.map(f=>{
-    const sc=f.stage==='New Member'?'active':f.stage==='Membership Class'?'b-blue':f.stage==='Second Timer'?'b-gold':'inactive';
-    return `<tr><td><strong>${f.name}</strong></td><td>${f.date}</td><td><span class="badge ${f.yes==='Yes'?'active':f.yes==='No'?'inactive':'pending'}">${f.yes}</span></td><td><span class="badge ${sc}">${f.stage}</span></td><td>${f.cls}</td><td>${f.fu}</td></tr>`;
-  }).join(''):'<tr><td colspan="6" style="color:var(--text-mute);text-align:center;padding:20px;">No first timers yet</td></tr>';
+
+function dzDrag(e, id) { e.preventDefault(); document.getElementById(id).classList.add('dragover'); }
+function dzLeave(id) { document.getElementById(id).classList.remove('dragover'); }
+function dzDrop(e, type) { e.preventDefault(); document.getElementById('dz-' + type).classList.remove('dragover'); var f = e.dataTransfer.files[0]; if (f) processFile(f, type); }
+function handleUpload(e, type) { var f = e.target.files[0]; if (f) processFile(f, type); }
+
+function processFile(file, type) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = new Uint8Array(e.target.result);
+      var wb = XLSX.read(data, {type:'array', cellDates:true});
+      var sheetName = wb.SheetNames.includes('Data') ? 'Data' : wb.SheetNames[0];
+      var ws = wb.Sheets[sheetName];
+      var rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false, dateNF:'yyyy-mm-dd'});
+      if (!rows || rows.length < 2) { showPrevErr(type, 'File appears empty.'); return; }
+      var headers = rows[0].map(function(h) { return String(h||'').trim(); });
+      var dataRows = rows.slice(1).filter(function(r) { return r.some(function(c) { return c !== null && c !== undefined && String(c).trim() !== ''; }); });
+      if (!dataRows.length) { showPrevErr(type, 'No data rows found.'); return; }
+      PENDING_UPLOADS[type] = {headers:headers, rows:dataRows};
+      showPrev(type, headers, dataRows);
+    } catch(err) { showPrevErr(type, 'Could not read file.'); }
+  };
+  reader.readAsArrayBuffer(file);
 }
 
-// ══════════════════════════════════════════════
-//  INSIGHTS
-// ══════════════════════════════════════════════
-function generateInsights() {
-  document.getElementById('ins-month').textContent=D.month;
-  const conv=D.kpis.ft>0?Math.round(D.kpis.nm/D.kpis.ft*100):0;
-  const topT=[...D.tribes].sort((a,b)=>b.growth-a.growth)[0];
-  const watchT=[...D.tribes].sort((a,b)=>a.att-b.att)[0];
-  const avgAtt=Math.round(D.tribes.reduce((s,t)=>s+t.att,0)/D.tribes.length)||0;
-  const insights=[
-    {type:'pos',tag:'Conversion',title:`${conv}% First-Timer Conversion`,text:`Out of ${D.kpis.ft} first timers, ${D.kpis.nm} became members. ${conv>=40?'Strong — the follow-up process is working.':'Room to tighten first-timer follow-up.'}`},
-    {type:D.kpis.souls>=10?'pos':'warn',tag:'Evangelism',title:`${D.kpis.souls} Souls Saved`,text:`${D.kpis.souls} decisions this month. Connect every saved soul to discipleship within 2 weeks.`},
-    {type:'neu',tag:'Tribe Leader',title:`${topT.name} Leads Growth`,text:`${topT.name} leads with ${topT.mem} members and ${topT.att}% avg attendance. Study and replicate what's working.`},
-    {type:'warn',tag:'Needs Attention',title:`${watchT.name} Lowest Attendance (${watchT.att}%)`,text:`Below church average of ${avgAtt}%. Recommend a pastoral check-in with tribe leader before month end.`},
-    {type:'pos',tag:'Immerse',title:`${D.kpis.imm} at Friday Immerse`,text:`Strong mid-week engagement. Keep nurturing Immerse as a key discipleship touchpoint.`},
-    {type:D.kpis.bap>=6?'pos':'neu',tag:'Baptisms',title:`${D.kpis.bap} Baptisms`,text:`Celebrate publicly in next Sunday's service to inspire others.`},
-    {type:D.kpis.icu>=4?'pos':'alert',tag:'ICU Turnaround',title:`${D.kpis.icu} ICU Members Reactivated`,text:`Keep following up remaining ICU members systematically through tribe leaders.`},
-    {type:'neu',tag:'Training',title:`${D.training.total>0?Math.round(D.training.enrolled/D.training.total*100):0}% of Members in Training`,text:`${D.training.enrolled} enrolled, ${D.training.done} completed. Target: 30% of membership by Q3.`}
-  ]
+function showPrev(type, headers, rows) {
+  var el = document.getElementById('prev-' + type);
+  el.style.display = 'block';
+  var preview = rows.slice(0, 4);
+  el.innerHTML = '<div class="preview-banner"><div class="preview-badge">✅</div><div class="preview-info"><div class="preview-title">' + rows.length + ' row' + (rows.length !== 1 ? 's' : '') + ' ready</div><div class="preview-sub">First ' + preview.length + ' shown</div></div></div><div class="preview-table-wrap"><table class="preview-table"><thead><tr>' + headers.map(function(h) { return '<th>' + h + '</th>'; }).join('') + '</tr></thead><tbody>' + preview.map(function(r) { return '<tr>' + headers.map(function(_,i) { return '<td>' + (r[i]||'—') + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div>';
+  document.getElementById('btn-up-' + type).disabled = false;
+}
+
+function showPrevErr(type, msg) {
+  var el = document.getElementById('prev-' + type);
+  el.style.display = 'block';
+  el.innerHTML = '<div class="preview-banner error"><div class="preview-badge">❌</div><div class="preview-info"><div class="preview-title">Error</div><div class="preview-sub">' + msg + '</div></div></div>';
+  document.getElementById('btn-up-' + type).disabled = true;
+}
+
+function confirmBulkUpload(type, sheetName) {
+  var pending = PENDING_UPLOADS[type];
+  if (!pending) return;
+  var tmpl = UPLOAD_TEMPLATES[type];
+  var rowArrays = pending.rows.map(function(row) { return tmpl.headers.map(function(_, i) { return row[i] || ''; }); });
+  writeToSheet(sheetName, rowArrays, 'append').then(function(ok) {
+    if (ok) {
+      toast(pending.rows.length + ' rows saved to Google Sheets. Click Refresh Data to update the dashboard.');
+      delete PENDING_UPLOADS[type];
+      document.getElementById('btn-up-' + type).disabled = true;
+      document.getElementById('prev-' + type).style.display = 'none';
+    }
+  });
+}
+
+function downloadTemplate(type) {
+  var t = UPLOAD_TEMPLATES[type];
+  var wb = XLSX.utils.book_new();
+  var ws = XLSX.utils.aoa_to_sheet([t.headers].concat(t.sample));
+  ws['!cols'] = t.headers.map(function(h) { return {wch: Math.max(h.length + 4, 16)}; });
+  XLSX.utils.book_append_sheet(wb, ws, 'Data');
+  var card = UPLOAD_CARDS.find(function(c) { return c.type === type; });
+  var label = card ? card.title.replace(/\s+/g, '_') : type;
+  XLSX.writeFile(wb, 'TNY_Template_' + label + '.xlsx');
+  toast('Template downloaded');
+}
+
+// INIT — render immediately, sync in background
+renderDashboard();
+setSyncStatus('syncing', 'Connecting…');
+setTimeout(function() {
+  refreshAllData().catch(function() {
+    setSyncStatus('error', 'Offline mode');
+    hideLoading();
+    toast('Working offline. Click Refresh Data to try connecting.');
+  });
+}, 400);
+</script>
+</body>
+</html>
