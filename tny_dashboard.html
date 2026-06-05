@@ -659,7 +659,7 @@ tbody tr:hover td{background:#faf8f4;}
       <div class="chart-card" style="margin-bottom:20px;"><div class="chart-area" id="tribe-chart"></div></div>
       <div class="sec-hdr"><div class="sec-title">Tribe Comparison</div></div>
       <div class="table-card">
-        <table><thead><tr><th>Tribe</th><th>Members</th><th>Avg Attendance %</th><th>MoM Growth</th><th>Status</th></tr></thead>
+        <table><thead><tr><th>Tribe</th><th>Members</th><th>Present</th><th>Attendance %</th><th>MoM Growth</th><th>Status</th></tr></thead>
         <tbody id="tribe-tbody"></tbody></table>
       </div>
     </div>
@@ -1050,7 +1050,7 @@ function showView(id) {
   document.getElementById('topbar-title').textContent = V_TITLES[id] || 'Dashboard';
   if (id === 'dashboard') renderDashboard();
   if (id === 'insights') generateInsights();
-  if (id === 'report-tribes') renderTribeReport();
+  if (id === 'report-tribes') { refreshAllData().then(function(){ renderTribeReport(); }); }
   if (id === 'report-members') renderDir();
   if (id === 'entry-attendance') buildTribeAttForm();
   if (id === 'bulk-upload') buildUploadHub();
@@ -1112,8 +1112,19 @@ function selectMonth(mo, yr) {
   var el = document.getElementById('ins-month');
   if (el) el.textContent = D.month;
   document.getElementById('month-picker').style.display = 'none';
-  // Refresh data filtered to this month
-  refreshAllData();
+  // Refresh data filtered to this month, then re-render all active views
+  refreshAllData().then(function() {
+    // Re-render tribe report if it's currently visible
+    var tribeView = document.getElementById('view-report-tribes');
+    if (tribeView && tribeView.classList.contains('active')) {
+      renderTribeReport();
+    }
+    // Re-render member directory if visible
+    var dirView = document.getElementById('view-report-members');
+    if (dirView && dirView.classList.contains('active')) {
+      renderDir();
+    }
+  });
 }
 function goToLatestMonth() {
   var now = new Date();
@@ -1288,14 +1299,33 @@ function renderTribeReport() {
     '<div class="kpi-card ck-gold"><div class="kpi-label">Total Tribe Members</div><div class="kpi-val">' + total + '</div></div>' +
     '<div class="kpi-card ck-green"><div class="kpi-label">Avg Tribe Attendance</div><div class="kpi-val">' + avg + '%</div></div>' +
     '<div class="kpi-card ck-blue"><div class="kpi-label">Tribes Growing</div><div class="kpi-val">' + D.tribes.filter(function(t) { return t.growth > 0; }).length + '/' + D.tribes.length + '</div></div>';
-  var max = Math.max.apply(null, D.tribes.map(function(t) { return t.mem; }).concat([1]));
+  // Show two bars per tribe: members (navy) and attendance % (gold)
+  var maxMem = Math.max.apply(null, D.tribes.map(function(t) { return t.mem; }).concat([1]));
   document.getElementById('tribe-chart').innerHTML = D.tribes.map(function(t) {
-    var c = t.growth > 0 ? 'var(--green)' : t.growth < 0 ? 'var(--red)' : 'var(--gold)';
-    return '<div class="bar-wrap"><div class="bar" style="background:' + c + ';height:' + (t.mem/max*100) + '%;width:100%;"><div class="bar-tip">' + t.mem + ' members</div></div><div class="bar-lbl" style="font-size:9px;">' + t.name.length > 8 ? t.name.substring(0,8) : t.name + '</div></div>';
+    var col = t.growth > 0 ? 'var(--green)' : t.growth < 0 ? 'var(--red)' : 'var(--gold)';
+    var shortName = t.name.length > 8 ? t.name.substring(0,8) : t.name;
+    return '<div class="bar-wrap">' +
+      '<div style="display:flex;gap:2px;align-items:flex-end;width:100%;height:140px;">' +
+        '<div class="bar" style="background:var(--navy);height:' + (t.mem/maxMem*100) + '%;flex:1;"><div class="bar-tip">' + t.name + ': ' + t.mem + ' members</div></div>' +
+        '<div class="bar" style="background:' + col + ';height:' + (t.att||0) + '%;flex:1;"><div class="bar-tip">' + t.name + ': ' + (t.att||0) + '% attendance</div></div>' +
+      '</div>' +
+      '<div class="bar-lbl" style="font-size:9px;">' + shortName + '</div>' +
+    '</div>';
   }).join('');
   document.getElementById('tribe-tbody').innerHTML = D.tribes.map(function(t) {
     var sc = t.status === 'Growing' ? 'active' : t.status === 'ICU Watch' ? 'pending' : 'inactive';
-    return '<tr><td><strong>' + t.name + '</strong></td><td>' + t.mem + '</td><td>' + t.att + '%</td><td style="color:' + (t.growth >= 0 ? 'var(--green)' : 'var(--red)') + ';">' + (t.growth >= 0 ? '+' : '') + t.growth + '%</td><td><span class="badge ' + sc + '">' + t.status + '</span></td></tr>';
+    var attDisplay = t.att > 0 ? t.att + '%' : '—';
+    var presentDisplay = t.present > 0 ? t.present : (t.att > 0 && t.mem > 0 ? Math.round(t.mem * t.att / 100) : '—');
+    var growthDisplay = t.growth !== 0 ? (t.growth >= 0 ? '+' : '') + t.growth + '%' : '—';
+    var growthCol = t.growth > 0 ? 'var(--green)' : t.growth < 0 ? 'var(--red)' : 'var(--text-mute)';
+    return '<tr>' +
+      '<td><strong>' + t.name + '</strong></td>' +
+      '<td>' + (t.mem || '—') + '</td>' +
+      '<td>' + presentDisplay + '</td>' +
+      '<td>' + attDisplay + '</td>' +
+      '<td style="color:' + growthCol + ';">' + growthDisplay + '</td>' +
+      '<td><span class="badge ' + sc + '">' + t.status + '</span></td>' +
+    '</tr>';
   }).join('');
 }
 
