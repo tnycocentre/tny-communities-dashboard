@@ -851,9 +851,15 @@ function refreshAllData() {
     // Filter rows by month where date is available
     var ftFiltered = ftRows.filter(function(r) { return matchesMonth(r,'Date'); });
     var memberFiltered = memberRows.filter(function(r) { return matchesMonth(r,'Date Joined'); });
-    var attFiltered = attRows; // Use ALL attendance for the trend chart — shows full history
+    // Attendance trend chart: use all rows for the trend (full history).
+    // Service records for weekly chart: filter to selected month.
+    var attFiltered = attRows;
+    var attForMonth = attRows.filter(function(r) { return matchesMonth(r,'Date'); });
     var indAttFiltered = indAttRows; // keep all individual attendance
-    var tribeAttFiltered = tribeAttRows; // Use ALL tribe attendance — show most recent entry per tribe regardless of month
+    // Tribe attendance: filter to selected month first.
+    // If selected month has no data, fall back to most recent available month.
+    var tribeAttForMonth = tribeAttRows.filter(function(r) { return matchesMonth(r,'Meeting Date'); });
+    var tribeAttFiltered = tribeAttForMonth.length > 0 ? tribeAttForMonth : tribeAttRows;
     var soulsFiltered = soulsRows.filter(function(r) { return matchesMonth(r,'Service Date'); });
     var evFiltered = evRows.filter(function(r) { return matchesMonth(r,'Date'); });
 
@@ -888,10 +894,21 @@ function refreshAllData() {
     D.teamTotals = {};
     D.immerseRecords = [];
     if (attFiltered.length > 0) {
+      // Build trend chart from ALL attendance data
       var monthMap = {};
+      attFiltered.forEach(function(mr) {
+        var md = mr['Date'] || '';
+        if (!md) return;
+        var mmo = md.substring(0, 7);
+        if (!monthMap[mmo]) monthMap[mmo] = {mem:0, wkr:0};
+        monthMap[mmo].mem += parseInt(mr['Members Present']) || 0;
+        monthMap[mmo].wkr += parseInt(mr['Workers Total'] || mr['Workers Present']) || 0;
+      });
       var serviceTeams = ["Admin", "Comms", "Data", "Evangelism", "Facility", "Interest Group", "Prayer", "Protocol", "Shutter Box", "Sound/Loud", "The New Music", "Treasureville", "Tribes", "Ushering/Amiables", "Discipleship", "Community Centre"];
       var tribeNames = ["Central", "Yaba 1", "Yaba 2", "Surulere", "Campus"];
-      attFiltered.forEach(function(r) {
+      // Use month-filtered for weekly charts; attFiltered for trend
+      var weeklySource = attForMonth.length > 0 ? attForMonth : attFiltered;
+      weeklySource.forEach(function(r) {
         var d = r['Date'] || '';
         if (!d) return;
         var mo = d.substring(0, 7);
