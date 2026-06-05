@@ -234,7 +234,7 @@ tbody tr:hover td{background:#faf8f4;}
         <div class="kpi-card ck-orange"><div class="kpi-ico">🔁</div><div class="kpi-label">ICU Turned Around</div><div class="kpi-val" id="k-icu">0</div><div class="kpi-delta"></div></div>
         <div class="kpi-card ck-blue"><div class="kpi-ico">🔄</div><div class="kpi-label">Second Timers</div><div class="kpi-val" id="k-2nd">0</div><div class="kpi-delta"></div></div>
         <div class="kpi-card ck-gold"><div class="kpi-ico">💧</div><div class="kpi-label">Baptisms</div><div class="kpi-val" id="k-bap">0</div><div class="kpi-delta"></div></div>
-        <div class="kpi-card ck-green"><div class="kpi-ico">🌙</div><div class="kpi-label">Immerse Attendance</div><div class="kpi-val" id="k-imm">0</div><div class="kpi-delta"></div></div>
+        <div class="kpi-card ck-green"><div class="kpi-ico">🌙</div><div class="kpi-label">Avg Immerse Attendance</div><div class="kpi-val" id="k-imm">—</div><div class="kpi-delta" id="kd-imm"></div></div>
         <div class="kpi-card ck-red"><div class="kpi-ico">📚</div><div class="kpi-label">In Membership Class</div><div class="kpi-val" id="k-mclass">0</div><div class="kpi-delta"></div></div>
       </div>
       <div class="charts-row">
@@ -248,6 +248,25 @@ tbody tr:hover td{background:#faf8f4;}
           <div id="funnel"><div style="color:var(--text-mute);font-size:12px;padding:10px 0;">No data yet</div></div>
         </div>
       </div>
+      <!-- WEEKLY SERVICE ATTENDANCE CHART -->
+      <div class="chart-card" style="margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div class="chart-title" style="margin:0;">Weekly Service Attendance — Members vs Workers vs Total</div>
+          <div style="display:flex;gap:12px;">
+            <span style="font-size:10px;display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;display:inline-block;background:var(--navy)"></span>Members</span>
+            <span style="font-size:10px;display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;display:inline-block;background:var(--gold)"></span>Workers</span>
+            <span style="font-size:10px;display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;display:inline-block;background:var(--green)"></span>Total</span>
+          </div>
+        </div>
+        <div class="chart-area" id="weekly-svc-chart" style="height:160px;"><div style="color:var(--text-mute);font-size:12px;margin:auto;">No service data yet — enter attendance above</div></div>
+      </div>
+
+      <!-- SERVICE TEAM BREAKDOWN TABLE -->
+      <div class="chart-card" style="margin-bottom:20px;">
+        <div class="chart-title">Service Team Headcount — This Month</div>
+        <div id="team-breakdown-table" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;"></div>
+      </div>
+
       <div class="charts-row">
         <div class="chart-card">
           <div class="chart-title">Souls Saved — Weekly</div>
@@ -256,6 +275,28 @@ tbody tr:hover td{background:#faf8f4;}
         <div class="chart-card">
           <div class="chart-title">Affinity & Interest Groups</div>
           <div class="donut-wrap" id="groups-donut"><div style="color:var(--text-mute);font-size:12px;">No data yet</div></div>
+        </div>
+      </div>
+
+      <!-- IMMERSE ATTENDANCE CHART -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <div class="chart-title" style="margin:0;">🌙 Immerse Attendance — Weekly</div>
+            <div style="background:var(--gold-pale);border:1px solid var(--border);border-radius:8px;padding:5px 14px;text-align:center;">
+              <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-mute);">Monthly Avg</div>
+              <div id="imm-avg" style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;color:var(--navy);">—</div>
+            </div>
+          </div>
+          <div class="chart-area" id="imm-chart" style="height:150px;">
+            <div style="color:var(--text-mute);font-size:12px;margin:auto;">No Immerse data yet</div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" style="margin-bottom:14px;">🌙 Immerse — This Month at a Glance</div>
+          <div id="imm-glance" style="display:flex;flex-direction:column;gap:10px;">
+            <div style="color:var(--text-mute);font-size:12px;">No data yet</div>
+          </div>
         </div>
       </div>
       <div class="sec-hdr">
@@ -392,27 +433,142 @@ tbody tr:hover td{background:#faf8f4;}
     <!-- ENTRY: ATTENDANCE -->
     <div class="view" id="view-entry-attendance">
       <div class="sec-hdr"><div class="sec-title">Attendance Entry</div></div>
-      <div class="form-grid">
-        <div class="form-sec">
-          <div class="form-sec-title">📋 Sunday Service</div>
-          <div class="form-row"><label class="form-lbl">Service Date</label><input class="form-inp" type="date" id="sv-date"></div>
-          <div class="form-row"><label class="form-lbl">Members Present</label><input class="form-inp" type="number" id="sv-mem" placeholder="e.g. 180" oninput="previewAttTotal()"></div>
-          <div class="form-row"><label class="form-lbl">Workers Present</label><input class="form-inp" type="number" id="sv-wkr" placeholder="e.g. 45" oninput="previewAttTotal()"></div>
-          <div class="form-row"><label class="form-lbl">Total Attendance</label><input class="form-inp" type="number" id="sv-total" placeholder="Auto-calculated"></div>
-          <div class="form-note" id="att-preview">Auto-calculates from members + workers.</div>
+
+      <!-- ROW 1: Date + Overview -->
+      <div style="background:white;border-radius:11px;padding:20px;border:1px solid #ede8df;box-shadow:var(--shadow);margin-bottom:16px;">
+        <div class="form-sec-title">📋 Sunday Service — Overview</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;align-items:end;">
+          <div class="form-row" style="margin:0;"><label class="form-lbl">Service Date</label><input class="form-inp" type="date" id="sv-date"></div>
+          <div class="form-row" style="margin:0;"><label class="form-lbl">Week</label>
+            <select class="form-sel" id="sv-week"><option>Week 1</option><option>Week 2</option><option>Week 3</option><option>Week 4</option><option>Week 5</option></select></div>
+          <div class="form-row" style="margin:0;"><label class="form-lbl">Members Present</label><input class="form-inp" type="number" id="sv-mem" placeholder="e.g. 180" oninput="calcServiceTotal()"></div>
+          <div class="form-row" style="margin:0;"><label class="form-lbl">Workers Total (Auto)</label><input class="form-inp" type="number" id="sv-wkr" placeholder="Auto from teams" style="background:#f0ece4;" readonly></div>
+          <div class="form-row" style="margin:0;"><label class="form-lbl">Grand Total (Auto)</label><input class="form-inp" type="number" id="sv-total" placeholder="Auto-calculated" style="background:#f0ece4;" readonly></div>
+        </div>
+        <div class="form-note" id="att-preview" style="margin-top:10px;">Fill in service teams below — worker total and grand total calculate automatically.</div>
+      </div>
+
+      <!-- ROW 2: Service Teams + Tribe Breakdown -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+
+        <div style="background:white;border-radius:11px;padding:20px;border:1px solid #ede8df;box-shadow:var(--shadow);">
+          <div class="form-sec-title">👷 Service Team Headcount</div>
+          <div style="font-size:10px;color:var(--text-mute);margin-bottom:12px;font-style:italic;">Enter number of workers present per team</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Admin</label>
+            <input class="form-inp" type="number" id="st-admin" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Comms</label>
+            <input class="form-inp" type="number" id="st-comms" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Data</label>
+            <input class="form-inp" type="number" id="st-data" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Evangelism</label>
+            <input class="form-inp" type="number" id="st-evangelism" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Facility</label>
+            <input class="form-inp" type="number" id="st-facility" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Interest Group</label>
+            <input class="form-inp" type="number" id="st-interest_group" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Prayer</label>
+            <input class="form-inp" type="number" id="st-prayer" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Protocol</label>
+            <input class="form-inp" type="number" id="st-protocol" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Shutter Box</label>
+            <input class="form-inp" type="number" id="st-shutter_box" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Sound/Loud</label>
+            <input class="form-inp" type="number" id="st-sound_loud" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">The New Music</label>
+            <input class="form-inp" type="number" id="st-the_new_music" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Treasureville</label>
+            <input class="form-inp" type="number" id="st-treasureville" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Tribes</label>
+            <input class="form-inp" type="number" id="st-tribes" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Ushering/Amiables</label>
+            <input class="form-inp" type="number" id="st-ushering_amiables" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Discipleship</label>
+            <input class="form-inp" type="number" id="st-discipleship" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Community Centre</label>
+            <input class="form-inp" type="number" id="st-community_centre" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #ede8df;">
+            <label style="font-size:11px;font-weight:700;color:var(--navy);width:160px;">TOTAL WORKERS</label>
+            <input class="form-inp" type="number" id="sv-wkr-display" placeholder="0" style="width:80px;padding:6px 8px;font-size:12px;font-weight:700;background:var(--gold-pale);" readonly>
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:11px;padding:20px;border:1px solid #ede8df;box-shadow:var(--shadow);">
+          <div class="form-sec-title">🏘 Tribe Attendance at Service</div>
+          <div style="font-size:10px;color:var(--text-mute);margin-bottom:12px;font-style:italic;">How many members from each tribe attended this service</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:80px;flex-shrink:0;">Central</label>
+            <input class="form-inp" type="number" id="sat-central" placeholder="0" oninput="calcServiceTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:80px;flex-shrink:0;">Yaba 1</label>
+            <input class="form-inp" type="number" id="sat-yaba_1" placeholder="0" oninput="calcServiceTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:80px;flex-shrink:0;">Yaba 2</label>
+            <input class="form-inp" type="number" id="sat-yaba_2" placeholder="0" oninput="calcServiceTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:80px;flex-shrink:0;">Surulere</label>
+            <input class="form-inp" type="number" id="sat-surulere" placeholder="0" oninput="calcServiceTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:80px;flex-shrink:0;">Campus</label>
+            <input class="form-inp" type="number" id="sat-campus" placeholder="0" oninput="calcServiceTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #ede8df;">
+            <label style="font-size:11px;font-weight:700;color:var(--navy);width:80px;">TOTAL</label>
+            <input class="form-inp" type="number" id="sat-total-display" placeholder="0" style="width:80px;padding:6px 8px;font-size:12px;font-weight:700;background:var(--gold-pale);" readonly>
+          </div>
           <div class="divider"></div>
           <div class="form-sec-title" style="border:none;padding:0;margin-bottom:10px;font-size:13px;">🌙 Friday Immerse</div>
-          <div class="form-row"><label class="form-lbl">Immerse Date</label><input class="form-inp" type="date" id="imm-date"></div>
-          <div class="form-row"><label class="form-lbl">Immerse Attendance</label><input class="form-inp" type="number" id="imm-cnt" placeholder="e.g. 61"></div>
-          <button class="form-submit" id="btn-save-att" onclick="saveAttendance()">✓ Save to Google Sheets</button>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="form-row" style="margin:0;flex:1;"><label class="form-lbl">Date</label><input class="form-inp" type="date" id="imm-date"></div>
+            <div class="form-row" style="margin:0;flex:1;"><label class="form-lbl">Attendance</label><input class="form-inp" type="number" id="imm-cnt" placeholder="e.g. 61"></div>
+          </div>
         </div>
-        <div class="form-sec">
-          <div class="form-sec-title">🏘 Tribe Attendance</div>
-          <div id="tribe-att-form"></div>
-          <div class="form-row" style="margin-top:10px;"><label class="form-lbl">Meeting Date</label><input class="form-inp" type="date" id="tribe-att-date"></div>
-          <button class="form-submit" id="btn-save-tribeatt" onclick="saveTribeAtt()">✓ Save Tribe Attendance</button>
-          <div class="divider"></div>
-          <div class="form-sec-title" style="border:none;padding:0;margin-bottom:10px;font-size:13px;">👤 Individual Attendance</div>
+      </div>
+
+      <!-- SAVE + INDIVIDUAL ATTENDANCE -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+        <div style="background:white;border-radius:11px;padding:20px;border:1px solid #ede8df;box-shadow:var(--shadow);">
+          <div class="form-sec-title">💾 Save This Service Record</div>
+          <div class="form-note" style="margin-bottom:14px;">This saves the full service record — overview, all 16 team headcounts, tribe breakdown, and Immerse — to Google Sheets in one click.</div>
+          <button class="form-submit" id="btn-save-att" onclick="saveAttendance()">✓ Save Full Service Record to Google Sheets</button>
+        </div>
+        <div style="background:white;border-radius:11px;padding:20px;border:1px solid #ede8df;box-shadow:var(--shadow);">
+          <div class="form-sec-title">👤 Individual Attendance %</div>
           <div class="form-row"><label class="form-lbl">Name</label><input class="form-inp" id="ind-name" placeholder="Worker or member name"></div>
           <div class="form-row"><label class="form-lbl">Role</label><select class="form-sel" id="ind-role"><option>Worker/Leader</option><option>Member</option></select></div>
           <div class="form-2col">
@@ -423,6 +579,17 @@ tbody tr:hover td{background:#faf8f4;}
           <button class="form-submit" id="btn-save-indatt" onclick="saveIndAtt()">✓ Save Individual Attendance</button>
         </div>
       </div>
+
+      <!-- TRIBE MEETING ATTENDANCE (separate from service) -->
+      <div style="background:white;border-radius:11px;padding:20px;border:1px solid #ede8df;box-shadow:var(--shadow);">
+        <div class="form-sec-title">🏘 Tribe Meeting Attendance (separate from Sunday service)</div>
+        <div id="tribe-att-form" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;"></div>
+        <div style="display:flex;gap:12px;align-items:end;margin-top:12px;">
+          <div class="form-row" style="margin:0;"><label class="form-lbl">Meeting Date</label><input class="form-inp" type="date" id="tribe-att-date"></div>
+          <button class="form-submit" id="btn-save-tribeatt" onclick="saveTribeAtt()" style="width:auto;padding:11px 20px;margin-top:0;">✓ Save Tribe Meeting Attendance</button>
+        </div>
+      </div>
+
     </div>
 
     <!-- ENTRY: GROWTH -->
@@ -562,13 +729,16 @@ var D = {
   newMembers:[],
   firstTimers:[],
   events:[],
-  training:{name:'',enrolled:0,active:0,done:0,total:0}
+  training:{name:'',enrolled:0,active:0,done:0,total:0},
+  serviceRecords:[],
+  teamTotals:{},
+  immerseRecords:[]
 };
 
 var SHEET_HEADERS = {
   FirstTimers:   ['Name','Date','Said Yes','Stage','Membership Class','Follow-up Owner','Phone','Month'],
   Members:       ['Name','Date Joined','Tribe','Status','Baptised','Discipleship','Affinity Group','Interest Group'],
-  Attendance:    ['Date','Members Present','Workers Present','Total Attendance','Immerse Attendance'],
+  Attendance:    ['Date', 'Week', 'Service', 'Members Present', 'Workers Total', 'Total Attendance', 'Immerse Attendance', 'Team: Admin', 'Team: Comms', 'Team: Data', 'Team: Evangelism', 'Team: Facility', 'Team: Interest Group', 'Team: Prayer', 'Team: Protocol', 'Team: Shutter Box', 'Team: Sound/Loud', 'Team: The New Music', 'Team: Treasureville', 'Team: Tribes', 'Team: Ushering/Amiables', 'Team: Discipleship', 'Team: Community Centre', 'Tribe: Central', 'Tribe: Yaba 1', 'Tribe: Yaba 2', 'Tribe: Surulere', 'Tribe: Campus'],
   IndAttendance: ['Name','Role','Services Attended','Total Services','Attendance %'],
   TribeAttendance:['Tribe Name','Meeting Date','Members Present','Total Members','Attendance %'],
   SoulsSaved:    ['Week','Souls Saved','Joined Discipleship','Service Date'],
@@ -713,18 +883,40 @@ function refreshAllData() {
       D.interest[i].n = memberFiltered.filter(function(r) { return (r['Interest Group']||'') === g; }).length;
     });
 
-    // Attendance
+    // Attendance — parse all records including service teams and tribe cols
+    D.serviceRecords = [];
+    D.teamTotals = {};
+    D.immerseRecords = [];
     if (attFiltered.length > 0) {
       var monthMap = {};
+      var serviceTeams = ["Admin", "Comms", "Data", "Evangelism", "Facility", "Interest Group", "Prayer", "Protocol", "Shutter Box", "Sound/Loud", "The New Music", "Treasureville", "Tribes", "Ushering/Amiables", "Discipleship", "Community Centre"];
+      var tribeNames = ["Central", "Yaba 1", "Yaba 2", "Surulere", "Campus"];
       attFiltered.forEach(function(r) {
         var d = r['Date'] || '';
         if (!d) return;
         var mo = d.substring(0, 7);
         if (!monthMap[mo]) monthMap[mo] = {mem:0, wkr:0};
         monthMap[mo].mem += parseInt(r['Members Present']) || 0;
-        monthMap[mo].wkr += parseInt(r['Workers Present']) || 0;
+        monthMap[mo].wkr += parseInt(r['Workers Total'] || r['Workers Present']) || 0;
         var imm = parseInt(r['Immerse Attendance']) || 0;
-        if (imm > D.kpis.imm) D.kpis.imm = imm;
+        if (imm > 0) {
+          D.immerseRecords.push({ date: d, week: r['Week']||'', att: imm });
+        }
+        // Parse service team cols
+        var rec = {
+          date: d, week: r['Week']||'', mem: parseInt(r['Members Present'])||0,
+          wkr: parseInt(r['Workers Total']||r['Workers Present'])||0,
+          total: parseInt(r['Total Attendance'])||0, teams:{}, tribes:{}
+        };
+        serviceTeams.forEach(function(team) {
+          var v = parseInt(r['Team: ' + team]) || 0;
+          rec.teams[team] = v;
+          D.teamTotals[team] = (D.teamTotals[team]||0) + v;
+        });
+        tribeNames.forEach(function(tribe) {
+          rec.tribes[tribe] = parseInt(r['Tribe: ' + tribe]) || 0;
+        });
+        D.serviceRecords.push(rec);
       });
       var mos = Object.keys(monthMap).sort();
       D.att.lbl = mos.map(function(m) {
@@ -755,13 +947,27 @@ function refreshAllData() {
             return db - da;
           });
           var last = matching[0];
-          t.mem = parseInt(last['Total Members']) || t.mem;
-          t.att = parseInt(last['Attendance %']) || 0;
-          // Also calculate growth vs previous entry if available
+          var totalMem = parseInt(last['Total Members']) || 0;
+          var present = parseInt(last['Members Present']) || 0;
+          // Update tribe member count if provided
+          if (totalMem > 0) t.mem = totalMem;
+          // Calculate attendance % from raw numbers (more reliable than stored %)
+          var storedPct = parseInt(last['Attendance %']) || 0;
+          if (present > 0 && t.mem > 0) {
+            t.att = Math.round(present / t.mem * 100);
+          } else if (present > 0 && totalMem > 0) {
+            t.att = Math.round(present / totalMem * 100);
+          } else if (storedPct > 0) {
+            t.att = storedPct;
+          }
+          t.present = present; // store raw present count too
+          // MoM growth from previous entry
           if (matching.length > 1) {
             var prev = matching[1];
-            var prevAtt = parseInt(prev['Attendance %']) || 0;
-            t.growth = prevAtt > 0 ? Math.round((t.att - prevAtt) / prevAtt * 100) : 0;
+            var prevPresent = parseInt(prev['Members Present']) || 0;
+            var prevTotal = parseInt(prev['Total Members']) || totalMem || 1;
+            var prevPct = prevPresent > 0 ? Math.round(prevPresent/prevTotal*100) : (parseInt(prev['Attendance %'])||0);
+            t.growth = prevPct > 0 ? Math.round((t.att - prevPct) / prevPct * 100) : 0;
           }
           t.status = t.att >= 80 ? 'Growing' : t.att >= 65 ? 'Stable' : 'ICU Watch';
         }
@@ -908,9 +1114,15 @@ function renderDashboard() {
   document.getElementById('k-icu').textContent = D.kpis.icu;
   document.getElementById('k-2nd').textContent = D.kpis.s2nd;
   document.getElementById('k-bap').textContent = D.kpis.bap;
-  document.getElementById('k-imm').textContent = D.kpis.imm;
+  var immAvg = D.immerseRecords && D.immerseRecords.length
+    ? Math.round(D.immerseRecords.reduce(function(s,r){ return s+r.att; },0) / D.immerseRecords.length)
+    : 0;
+  document.getElementById('k-imm').textContent = immAvg || '—';
   document.getElementById('k-mclass').textContent = D.kpis.mclass;
   renderAttChart();
+  renderWeeklyServiceChart();
+  renderTeamBreakdown();
+  renderImmerseChart();
   renderFunnel();
   renderSoulsChart();
   renderGroupsDonut();
@@ -985,8 +1197,19 @@ function renderAttList(tab) {
 function renderTribeGrid() {
   document.getElementById('tribe-grid').innerHTML = D.tribes.map(function(t) {
     var sc = t.status === 'Growing' ? 'active' : t.status === 'ICU Watch' ? 'pending' : 'inactive';
-    var c = t.status === 'Growing' ? 'var(--green)' : t.status === 'ICU Watch' ? 'var(--orange)' : 'var(--blue)';
-    return '<div class="tribe-card"><div class="tribe-name">' + t.name + '<span class="badge ' + sc + '">' + t.status + '</span></div><div class="tribe-stat"><span>Members</span><span>' + t.mem + '</span></div><div class="tribe-stat"><span>Avg Attendance</span><span>' + t.att + '%</span></div><div class="prog-bar" style="margin:5px 0;"><div class="prog-fill" style="background:' + c + ';width:' + t.att + '%"></div></div><div class="tribe-stat"><span>MoM Growth</span><span style="color:' + (t.growth >= 0 ? 'var(--green)' : 'var(--red)') + ';">' + (t.growth >= 0 ? '+' : '') + t.growth + '%</span></div></div>';
+    var col = t.status === 'Growing' ? 'var(--green)' : t.status === 'ICU Watch' ? 'var(--orange)' : 'var(--blue)';
+    var presentStr = t.present > 0 ? t.present + ' present' : (t.att > 0 ? Math.round(t.mem * t.att / 100) + ' present' : 'No data yet');
+    var attStr = t.att > 0 ? t.att + '%' : '—';
+    var growthStr = t.growth !== 0 ? (t.growth > 0 ? '+' : '') + t.growth + '%' : '—';
+    var growthCol = t.growth > 0 ? 'var(--green)' : t.growth < 0 ? 'var(--red)' : 'var(--text-mute)';
+    return '<div class="tribe-card">' +
+      '<div class="tribe-name">' + t.name + '<span class="badge ' + sc + '">' + t.status + '</span></div>' +
+      '<div class="tribe-stat"><span>Total Members</span><span>' + (t.mem || '—') + '</span></div>' +
+      '<div class="tribe-stat"><span>Present</span><span style="color:var(--blue);font-weight:700;">' + presentStr + '</span></div>' +
+      '<div class="tribe-stat"><span>Attendance %</span><span style="font-weight:700;">' + attStr + '</span></div>' +
+      '<div class="prog-bar" style="margin:5px 0;"><div class="prog-fill" style="background:' + col + ';width:' + (t.att||0) + '%;"></div></div>' +
+      '<div class="tribe-stat"><span>MoM Growth</span><span style="color:' + growthCol + ';">' + growthStr + '</span></div>' +
+    '</div>';
   }).join('');
 }
 
@@ -1072,7 +1295,16 @@ function filterDir() { renderDir(document.getElementById('dir-search').value); }
 
 function buildTribeAttForm() {
   document.getElementById('tribe-att-form').innerHTML = D.tribes.map(function(t) {
-    return '<div class="form-row"><label class="form-lbl">' + t.name + '</label><input class="form-inp" type="number" placeholder="Members present" id="ta-' + t.name.replace(/\s+/g,'_') + '"></div>';
+    var tid = t.name.replace(/\s+/g,'_');
+    return '<div style="background:#faf8f4;border-radius:8px;padding:12px;border:1px solid #ede8df;">' +
+      '<div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:8px;">' + t.name + '</div>' +
+      '<div style="display:flex;gap:8px;">' +
+        '<div style="flex:1;"><div style="font-size:9px;font-weight:600;color:var(--text-mute);text-transform:uppercase;margin-bottom:3px;">Present</div>' +
+          '<input class="form-inp" type="number" placeholder="e.g. 34" id="ta-' + tid + '" style="padding:6px 8px;font-size:12px;"></div>' +
+        '<div style="flex:1;"><div style="font-size:9px;font-weight:600;color:var(--text-mute);text-transform:uppercase;margin-bottom:3px;">Total Members</div>' +
+          '<input class="form-inp" type="number" placeholder="e.g. 42" id="tatot-' + tid + '" style="padding:6px 8px;font-size:12px;" value="' + (t.mem||'') + '"></div>' +
+      '</div>' +
+    '</div>';
   }).join('');
 }
 
@@ -1160,25 +1392,91 @@ function saveAttendance() {
   setBtnLoading('btn-save-att', true);
   var m = document.getElementById('sv-mem').value || '0';
   var w = document.getElementById('sv-wkr').value || '0';
-  var row = [document.getElementById('sv-date').value || new Date().toISOString().split('T')[0], m, w, String(parseInt(m)+parseInt(w)), document.getElementById('imm-cnt').value || '0'];
+  var total = String(parseInt(m) + parseInt(w));
+  var date = document.getElementById('sv-date').value || new Date().toISOString().split('T')[0];
+  var week = document.getElementById('sv-week').value || 'Week 1';
+  var imm = document.getElementById('imm-cnt').value || '0';
+  var teamVals = [document.getElementById('st-admin').value||'0', document.getElementById('st-comms').value||'0', document.getElementById('st-data').value||'0', document.getElementById('st-evangelism').value||'0', document.getElementById('st-facility').value||'0', document.getElementById('st-interest_group').value||'0', document.getElementById('st-prayer').value||'0', document.getElementById('st-protocol').value||'0', document.getElementById('st-shutter_box').value||'0', document.getElementById('st-sound_loud').value||'0', document.getElementById('st-the_new_music').value||'0', document.getElementById('st-treasureville').value||'0', document.getElementById('st-tribes').value||'0', document.getElementById('st-ushering_amiables').value||'0', document.getElementById('st-discipleship').value||'0', document.getElementById('st-community_centre').value||'0'];
+  var tribeVals = [document.getElementById('sat-central').value||'0', document.getElementById('sat-yaba_1').value||'0', document.getElementById('sat-yaba_2').value||'0', document.getElementById('sat-surulere').value||'0', document.getElementById('sat-campus').value||'0'];
+  var row = [date, week, 'Sunday Service', m, w, total, imm].concat(teamVals).concat(tribeVals);
   writeToSheet('Attendance', [row]).then(function(ok) {
-    if (ok) toast('Attendance saved to Google Sheets');
+    if (ok) {
+      toast('Service record saved — ' + total + ' total attendance');
+      // Update local charts immediately
+      refreshAllData();
+    }
     setBtnLoading('btn-save-att', false);
   });
+}
+
+function calcWorkerTotal() {
+  var teams = ['st-admin', 'st-comms', 'st-data', 'st-evangelism', 'st-facility', 'st-interest_group', 'st-prayer', 'st-protocol', 'st-shutter_box', 'st-sound_loud', 'st-the_new_music', 'st-treasureville', 'st-tribes', 'st-ushering_amiables', 'st-discipleship', 'st-community_centre'];
+  var total = 0;
+  teams.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) total += parseInt(el.value) || 0;
+  });
+  var wkrEl = document.getElementById('sv-wkr');
+  var wkrDisp = document.getElementById('sv-wkr-display');
+  if (wkrEl) wkrEl.value = total;
+  if (wkrDisp) wkrDisp.value = total;
+  calcServiceTotal();
+}
+
+function calcServiceTotal() {
+  var mem = parseInt(document.getElementById('sv-mem').value) || 0;
+  var wkr = parseInt(document.getElementById('sv-wkr').value) || 0;
+  var total = mem + wkr;
+  var el = document.getElementById('sv-total');
+  if (el) el.value = total || '';
+  // Tribe total
+  var tribes = ['sat-central', 'sat-yaba_1', 'sat-yaba_2', 'sat-surulere', 'sat-campus'];
+  var tribeTotal = 0;
+  tribes.forEach(function(id) {
+    var el2 = document.getElementById(id);
+    if (el2) tribeTotal += parseInt(el2.value) || 0;
+  });
+  var td = document.getElementById('sat-total-display');
+  if (td) td.value = tribeTotal || '';
+  // Update preview note
+  var prev = document.getElementById('att-preview');
+  if (prev && total > 0) {
+    prev.innerHTML = '<strong>' + mem + ' members</strong> + <strong>' + wkr + ' workers</strong> = <strong>' + total + ' total</strong>';
+  }
 }
 
 function saveTribeAtt() {
   setBtnLoading('btn-save-tribeatt', true);
   var date = document.getElementById('tribe-att-date').value || new Date().toISOString().split('T')[0];
+  // Prompt for total members per tribe if not already known
   var rows = [];
   D.tribes.forEach(function(t) {
     var el = document.getElementById('ta-' + t.name.replace(/\s+/g,'_'));
     var present = el ? parseInt(el.value) || 0 : 0;
-    if (present > 0) { var pct = t.mem > 0 ? Math.round(present/t.mem*100) : 0; rows.push([t.name, date, String(present), String(t.mem), String(pct)]); }
+    if (present > 0) {
+      // Ask for total members if t.mem is 0
+      var totEl = document.getElementById('tatot-' + t.name.replace(/\s+/g,'_'));
+      var inputTotal = totEl ? parseInt(totEl.value) || 0 : 0;
+      var totalMem = inputTotal > 0 ? inputTotal : (t.mem > 0 ? t.mem : present);
+      var pct = totalMem > 0 ? Math.round(present / totalMem * 100) : 0;
+      rows.push([t.name, date, String(present), String(totalMem), String(pct)]);
+      // Update local tribe data immediately so dashboard reflects it
+      t.present = present;
+      if (totalMem > 0) t.mem = totalMem;
+      t.att = pct;
+      t.status = pct >= 80 ? 'Growing' : pct >= 65 ? 'Stable' : 'ICU Watch';
+    }
   });
-  if (!rows.length) { toast('Enter at least one tribe attendance'); setBtnLoading('btn-save-tribeatt', false); return; }
+  if (!rows.length) {
+    toast('Enter at least one tribe attendance figure');
+    setBtnLoading('btn-save-tribeatt', false);
+    return;
+  }
   writeToSheet('TribeAttendance', rows).then(function(ok) {
-    if (ok) toast('Tribe attendance saved');
+    if (ok) {
+      renderTribeGrid(); // update dashboard immediately
+      toast('Tribe attendance saved — ' + rows.length + ' tribe(s) recorded');
+    }
     setBtnLoading('btn-save-tribeatt', false);
   });
 }
@@ -1281,7 +1579,7 @@ var UPLOAD_CARDS = [
 var UPLOAD_TEMPLATES = {
   ft:{headers:['Name','Date','Said Yes (Yes/No/Undecided)','Stage','Follow-up Owner','Phone'],sample:[['Tolu Adeyemi','2026-06-01','Yes','First Timer','Seun','08012345678']]},
   members:{headers:['Name','Date Joined','Tribe','Status','Baptised (Yes/No)','Discipleship (Yes/No/In Progress)','Affinity Group','Interest Group'],sample:[['Chidinma Okafor','2026-06-01','Central','Active','Yes','In Progress','Ladies','Finance']]},
-  attendance:{headers:['Date','Members Present','Workers Present','Total Attendance','Immerse Attendance'],sample:[['2026-06-01','170','44','214','58']]},
+  attendance:{headers:['Date','Week','Members Present','Workers Total','Immerse Attendance','Team: Admin','Team: Comms','Team: Data','Team: Evangelism','Team: Facility','Team: Interest Group','Team: Prayer','Team: Protocol','Team: Shutter Box','Team: Sound/Loud','Team: The New Music','Team: Treasureville','Team: Tribes','Team: Ushering/Amiables','Team: Discipleship','Team: Community Centre','Tribe: Central','Tribe: Yaba 1','Tribe: Yaba 2','Tribe: Surulere','Tribe: Campus'],sample:[['2026-06-01','Week 1','180','52','61','5','3','4','6','4','3','5','4','3','4','4','3','4','5','3','4','40','35','30','42','33']]},
   indatt:{headers:['Name','Role (Worker/Member)','Services Attended','Total Services This Month'],sample:[['Tolu Adeyemi','Worker','4','4']]},
   tribe:{headers:['Tribe Name','Meeting Date','Members Present','Total Members'],sample:[['Central','2026-06-07','34','42']]},
   souls:{headers:['Week (Week 1-4)','Souls Saved','Joined Discipleship Class','Service Date'],sample:[['Week 1','3','2','2026-06-01']]},
@@ -1364,6 +1662,106 @@ function downloadTemplate(type) {
   toast('Template downloaded');
 }
 
+
+function renderWeeklyServiceChart() {
+  var el = document.getElementById('weekly-svc-chart');
+  if (!el) return;
+  if (!D.serviceRecords || !D.serviceRecords.length) {
+    el.innerHTML = '<div style="color:var(--text-mute);font-size:12px;margin:auto;">No service data yet</div>';
+    return;
+  }
+  var recs = D.serviceRecords.slice().sort(function(a,b){ return new Date(a.date)-new Date(b.date); }).slice(-8);
+  var maxVal = Math.max.apply(null, recs.map(function(r){ return r.total || r.mem + r.wkr; }).concat([1]));
+  el.style.height = '160px';
+  el.innerHTML = recs.map(function(r) {
+    var total = r.total || (r.mem + r.wkr);
+    var lbl = r.date ? r.date.substring(5) : r.week;
+    return '<div class="bar-wrap"><div style="display:flex;gap:2px;align-items:flex-end;width:100%;height:140px;"><div class="bar" style="background:var(--navy);height:' + (r.mem/maxVal*100) + '%;flex:1;"><div class="bar-tip">Members: ' + r.mem + '</div></div><div class="bar" style="background:var(--gold);height:' + (r.wkr/maxVal*100) + '%;flex:1;"><div class="bar-tip">Workers: ' + r.wkr + '</div></div><div class="bar" style="background:var(--green);height:' + (total/maxVal*100) + '%;flex:1;opacity:.7;"><div class="bar-tip">Total: ' + total + '</div></div></div><div class="bar-lbl" style="font-size:9px;">' + lbl + '</div></div>';
+  }).join('');
+}
+
+function renderTeamBreakdown() {
+  var el = document.getElementById('team-breakdown-table');
+  if (!el) return;
+  var teams = ["Admin", "Comms", "Data", "Evangelism", "Facility", "Interest Group", "Prayer", "Protocol", "Shutter Box", "Sound/Loud", "The New Music", "Treasureville", "Tribes", "Ushering/Amiables", "Discipleship", "Community Centre"];
+  if (!D.teamTotals || !Object.keys(D.teamTotals).length) {
+    el.innerHTML = '<div style="color:var(--text-mute);font-size:12px;grid-column:1/-1;padding:8px;">No team data yet</div>';
+    return;
+  }
+  var maxTeam = Math.max.apply(null, teams.map(function(t){ return D.teamTotals[t]||0; }).concat([1]));
+  el.innerHTML = teams.map(function(t) {
+    var val = D.teamTotals[t] || 0;
+    var pct = Math.round(val/maxTeam*100);
+    var col = val >= maxTeam*0.8 ? 'var(--green)' : val >= maxTeam*0.5 ? 'var(--gold)' : 'var(--orange)';
+    return '<div style="background:#faf8f4;border-radius:8px;padding:10px 12px;border:1px solid #ede8df;"><div style="font-size:10px;font-weight:700;color:var(--text-mid);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + t + '</div><div style="font-family:DM Mono,monospace;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:5px;">' + val + '</div><div class="prog-bar"><div class="prog-fill" style="background:' + col + ';width:' + pct + '%;"></div></div></div>';
+  }).join('');
+}
+
+
+function renderImmerseChart() {
+  var chartEl = document.getElementById('imm-chart');
+  var avgEl = document.getElementById('imm-avg');
+  var glanceEl = document.getElementById('imm-glance');
+  if (!chartEl) return;
+
+  if (!D.immerseRecords || !D.immerseRecords.length) {
+    if (chartEl) chartEl.innerHTML = '<div style="color:var(--text-mute);font-size:12px;margin:auto;">No Immerse data yet</div>';
+    if (avgEl) avgEl.textContent = '—';
+    if (glanceEl) glanceEl.innerHTML = '<div style="color:var(--text-mute);font-size:12px;">No data yet</div>';
+    return;
+  }
+
+  // Sort by date
+  var recs = D.immerseRecords.slice().sort(function(a,b) {
+    return new Date(a.date) - new Date(b.date);
+  });
+
+  // Average
+  var total = recs.reduce(function(s,r) { return s + r.att; }, 0);
+  var avg = Math.round(total / recs.length);
+  if (avgEl) avgEl.textContent = avg;
+
+  // Bar chart
+  var maxVal = Math.max.apply(null, recs.map(function(r) { return r.att; }).concat([1]));
+  chartEl.style.height = '150px';
+  chartEl.innerHTML = recs.map(function(r) {
+    var lbl = r.date ? r.date.substring(5) : r.week;
+    var pct = r.att / maxVal * 100;
+    var col = r.att >= avg * 1.1 ? 'var(--green)' : r.att >= avg * 0.9 ? 'var(--gold)' : 'var(--orange)';
+    return '<div class="bar-wrap">' +
+      '<div style="width:100%;height:140px;display:flex;align-items:flex-end;">' +
+        '<div class="bar" style="background:' + col + ';height:' + pct + '%;width:100%;">' +
+          '<div class="bar-tip">' + r.att + ' attended</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="bar-lbl">' + lbl + '</div>' +
+    '</div>';
+  }).join('');
+
+  // At a glance panel
+  if (glanceEl) {
+    var highest = recs.slice().sort(function(a,b) { return b.att - a.att; })[0];
+    var lowest  = recs.slice().sort(function(a,b) { return a.att - b.att; })[0];
+    var trend = recs.length >= 2
+      ? (recs[recs.length-1].att >= recs[recs.length-2].att ? '↑ Growing' : '↓ Declining')
+      : '—';
+    var trendCol = trend.includes('Growing') ? 'var(--green)' : trend === '—' ? 'var(--text-mute)' : 'var(--red)';
+
+    glanceEl.innerHTML = [
+      { lbl:'Sessions This Month', val: recs.length },
+      { lbl:'Average Attendance',  val: avg },
+      { lbl:'Highest Session',     val: highest.att + ' (' + highest.date.substring(5) + ')' },
+      { lbl:'Lowest Session',      val: lowest.att  + ' (' + lowest.date.substring(5)  + ')' },
+      { lbl:'Trend',               val: trend, col: trendCol },
+    ].map(function(item) {
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#faf8f4;border-radius:7px;border:1px solid #ede8df;">' +
+        '<span style="font-size:11px;color:var(--text-mid);">' + item.lbl + '</span>' +
+        '<span style="font-size:13px;font-weight:700;color:' + (item.col||'var(--navy)') + ';">' + item.val + '</span>' +
+      '</div>';
+    }).join('');
+  }
+}
+
 // INIT — render immediately, sync in background
 renderDashboard();
 setSyncStatus('syncing', 'Connecting…');
@@ -1383,4 +1781,14 @@ setTimeout(function() {
     <div style="display:flex;gap:6px;align-items:center;">
       <button onclick="changePickerYear(-1)" style="background:var(--cream);border:1px solid #ddd;border-radius:6px;padding:3px 10px;cursor:pointer;font-size:13px;font-family:DM Sans,sans-serif;color:var(--navy);">&#9664;</button>
       <span id="picker-year" style="font-weight:700;font-size:14px;color:var(--navy);min-width:42px;text-align:center;">2026</span>
-      <button onclick="changePickerYear(1)" style="backgrou
+      <button onclick="changePickerYear(1)" style="background:var(--cream);border:1px solid #ddd;border-radius:6px;padding:3px 10px;cursor:pointer;font-size:13px;font-family:DM Sans,sans-serif;color:var(--navy);">&#9654;</button>
+    </div>
+  </div>
+  <div id="month-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
+  <div style="margin-top:12px;padding-top:10px;border-top:1px solid #ede8df;display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-size:10px;color:var(--text-mute);">Showing data for selected month</span>
+    <button onclick="goToLatestMonth()" style="background:var(--navy);color:var(--gold);border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;">Latest</button>
+  </div>
+</div>
+</body>
+</html>
