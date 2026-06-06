@@ -551,6 +551,8 @@ tbody tr:hover td{background:#faf8f4;}
             <label style="font-size:11px;font-weight:700;color:var(--navy);width:80px;">TOTAL</label>
             <input class="form-inp" type="number" id="sat-total-display" placeholder="0" style="width:80px;padding:6px 8px;font-size:12px;font-weight:700;background:var(--gold-pale);" readonly>
           </div>
+          <div style="font-size:10px;color:var(--text-mute);margin:8px 0 4px;font-style:italic;">Fill in any tribe and save — empty fields are skipped.</div>
+          <button class="form-submit" id="btn-save-sat" onclick="saveServiceTribeAtt()" style="margin-top:4px;margin-bottom:4px;">✓ Save Tribe Attendance at Service</button>
           <div class="divider"></div>
           <div class="form-sec-title" style="border:none;padding:0;margin-bottom:10px;font-size:13px;">🌙 Friday Immerse</div>
           <div style="display:flex;align-items:center;gap:12px;">
@@ -1861,6 +1863,47 @@ function saveImmerse() {
       toast('Immerse attendance saved — ' + cnt + ' attended');
     }
     if (btn) { btn.disabled = false; btn.textContent = '✓ Save Immerse Attendance'; }
+  });
+}
+
+
+function saveServiceTribeAtt() {
+  var btn = document.getElementById('btn-save-sat');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  var date = document.getElementById('sv-date').value || new Date().toISOString().split('T')[0];
+  var week = document.getElementById('sv-week') ? document.getElementById('sv-week').value : '';
+  var tribeIds   = ["sat-central", "sat-yaba_1", "sat-yaba_2", "sat-surulere", "sat-campus"];
+  var tribeNames = ["Central", "Yaba 1", "Yaba 2", "Surulere", "Campus"];
+  var rows = [];
+  tribeIds.forEach(function(id, i) {
+    var el = document.getElementById(id);
+    var val = el ? parseInt(el.value) : 0;
+    if (val > 0) {
+      // Save as TribeAttendance row so it appears on tribe cards
+      // Format: [Tribe Name, Meeting Date, Members Present, Total Members, Attendance %]
+      var tribe = D.tribes.find(function(t) { return t.name === tribeNames[i]; });
+      var totalMem = tribe ? tribe.mem : val;
+      var pct = totalMem > 0 ? Math.round(val / totalMem * 100) : 0;
+      rows.push([tribeNames[i], date, String(val), String(totalMem), String(pct)]);
+      // Update local D.tribes immediately
+      if (tribe) {
+        tribe.present = val;
+        if (totalMem > 0) tribe.att = pct;
+        tribe.status = pct >= 80 ? 'Growing' : pct >= 65 ? 'Stable' : 'ICU Watch';
+      }
+    }
+  });
+  if (!rows.length) {
+    toast('Enter at least one tribe figure before saving');
+    if (btn) { btn.disabled = false; btn.textContent = '✓ Save Tribe Attendance at Service'; }
+    return;
+  }
+  writeToSheet('TribeAttendance', rows).then(function(ok) {
+    if (ok) {
+      renderTribeGrid();
+      toast('✓ ' + rows.length + ' tribe(s) saved for ' + date + ' — remaining tribes can be added separately');
+    }
+    if (btn) { btn.disabled = false; btn.textContent = '✓ Save Tribe Attendance at Service'; }
   });
 }
 
