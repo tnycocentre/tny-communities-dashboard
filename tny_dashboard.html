@@ -453,7 +453,7 @@ tbody tr:hover td{background:#faf8f4;}
 
         <div style="background:white;border-radius:11px;padding:20px;border:1px solid #ede8df;box-shadow:var(--shadow);">
           <div class="form-sec-title">👷 Service Team Headcount</div>
-          <div style="font-size:10px;color:var(--text-mute);margin-bottom:12px;font-style:italic;">Enter number of workers present per team</div>
+          <div style="font-size:10px;color:var(--text-mute);margin-bottom:12px;font-style:italic;">Fill in any team and save — empty fields are skipped automatically.</div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
             <label style="font-size:11px;font-weight:600;color:var(--text-mid);width:160px;flex-shrink:0;">Admin</label>
             <input class="form-inp" type="number" id="st-admin" placeholder="0" oninput="calcWorkerTotal()" style="width:80px;padding:6px 8px;font-size:12px;">
@@ -584,10 +584,11 @@ tbody tr:hover td{background:#faf8f4;}
       <!-- TRIBE MEETING ATTENDANCE (separate from service) -->
       <div style="background:white;border-radius:11px;padding:20px;border:1px solid #ede8df;box-shadow:var(--shadow);">
         <div class="form-sec-title">🏘 Tribe Meeting Attendance (separate from Sunday service)</div>
-        <div id="tribe-att-form" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;"></div>
-        <div style="display:flex;gap:12px;align-items:end;margin-top:12px;">
-          <div class="form-row" style="margin:0;"><label class="form-lbl">Meeting Date</label><input class="form-inp" type="date" id="tribe-att-date"></div>
-          <button class="form-submit" id="btn-save-tribeatt" onclick="saveTribeAtt()" style="width:auto;padding:11px 20px;margin-top:0;">✓ Save Tribe Meeting Attendance</button>
+        <div style="font-size:11px;color:var(--text-mute);margin-bottom:14px;">You can fill in just one tribe and save — empty fields are ignored.</div>
+        <div id="tribe-att-form" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;"></div>
+        <div style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
+          <div class="form-row" style="margin:0;min-width:180px;"><label class="form-lbl">Meeting Date</label><input class="form-inp" type="date" id="tribe-att-date"></div>
+          <button class="form-submit" id="btn-save-tribeatt" onclick="saveTribeAtt()" style="width:auto;padding:11px 24px;margin-top:0;flex-shrink:0;">✓ Save Tribe Meeting Attendance</button>
         </div>
       </div>
 
@@ -1163,8 +1164,8 @@ function renderDashboard() {
   document.getElementById('k-bap').textContent = D.kpis.bap;
   var immAvg = D.immerseRecords && D.immerseRecords.length
     ? Math.round(D.immerseRecords.reduce(function(s,r){ return s+r.att; },0) / D.immerseRecords.length)
-    : 0;
-  document.getElementById('k-imm').textContent = immAvg || '—';
+    : null;
+  document.getElementById('k-imm').textContent = immAvg !== null ? immAvg : '—';
   document.getElementById('k-mclass').textContent = D.kpis.mclass;
   renderAttChart();
   renderWeeklyServiceChart();
