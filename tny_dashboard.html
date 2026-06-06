@@ -557,6 +557,7 @@ tbody tr:hover td{background:#faf8f4;}
             <div class="form-row" style="margin:0;flex:1;"><label class="form-lbl">Date</label><input class="form-inp" type="date" id="imm-date"></div>
             <div class="form-row" style="margin:0;flex:1;"><label class="form-lbl">Attendance</label><input class="form-inp" type="number" id="imm-cnt" placeholder="e.g. 61"></div>
           </div>
+          <button class="form-submit" id="btn-save-imm" onclick="saveImmerse()" style="margin-top:10px;">✓ Save Immerse Attendance</button>
         </div>
       </div>
 
@@ -745,7 +746,8 @@ var SHEET_HEADERS = {
   GuestRatio:    ['Month','New Members','Total Guests','New Members YTD','Total Guests YTD'],
   Training:      ['Training Name','Member Name','Status','Start Date'],
   Events:        ['Event Name','Week','Event Type','Attendance','Date'],
-  MemberMetrics: ['Month','Baptisms','ICU Turned Around','Transferred Out','Members Left','Moved Within Lagos','Moved Out Lagos','Out of Nigeria']
+  MemberMetrics: ['Month','Baptisms','ICU Turned Around','Transferred Out','Members Left','Moved Within Lagos','Moved Out Lagos','Out of Nigeria'],
+  Immerse:       ['Date','Month','Attendance']
 };
 
 function setSyncStatus(state, label) {
@@ -818,7 +820,7 @@ function refreshAllData() {
   setSyncStatus('syncing', 'Refreshing…');
   showLoading('Pulling latest data…', 'Fetching all sheets from Google Sheets');
 
-  var sheets = ['FirstTimers','Members','Attendance','IndAttendance','TribeAttendance','SoulsSaved','Events','Training','MemberMetrics'];
+  var sheets = ['FirstTimers','Members','Attendance','IndAttendance','TribeAttendance','SoulsSaved','Events','Training','MemberMetrics','Immerse'];
   var promises = sheets.map(function(s) { return readFromSheet(s); });
 
   return Promise.all(promises)
@@ -832,6 +834,7 @@ function refreshAllData() {
     var evRows = results[6];
     var trnRows = results[7];
     var metricRows = results[8];
+    var immerseRows = results[9] || [];
 
     // First Timers
     // Filter all rows to selected month
@@ -1003,6 +1006,22 @@ function refreshAllData() {
     }
 
     // Events
+    // Parse Immerse records from dedicated sheet
+    D.immerseRecords = [];
+    var immForMonth = immerseRows.filter(function(r) { return (r['Month']||'') === D.month || matchesMonth(r,'Date'); });
+    var immSource = immForMonth.length > 0 ? immForMonth : immerseRows;
+    immSource.forEach(function(r) {
+      var att = parseInt(r['Attendance']) || 0;
+      if (att > 0) D.immerseRecords.push({ date: r['Date']||'', week: '', att: att });
+    });
+    // Also keep inline immerse records from attendance sheet (already reset above)
+    // Both sources merged — deduplicate by date
+    var seenDates = {};
+    D.immerseRecords = D.immerseRecords.filter(function(r) {
+      if (seenDates[r.date]) return false;
+      seenDates[r.date] = true; return true;
+    });
+
     D.events = evFiltered.map(function(r) { return {name:r['Event Name'], week:r['Week'], type:r['Event Type'], att:r['Attendance']}; });
 
     // Training
@@ -1441,6 +1460,14 @@ function saveAttendance() {
   var w = document.getElementById('sv-wkr').value || '0';
   var total = String(parseInt(m) + parseInt(w));
   var date = document.getElementById('sv-date').value || new Date().toISOString().split('T')[0];
+  // Allow partial saves — at least one field must have a value
+  var hasAnyData = parseInt(m) > 0 || parseInt(w) > 0;
+  // Check if any team has a value
+  var teamIds = ['st-admin','st-comms','st-data','st-evangelism','st-facility','st-interest_group','st-prayer','st-protocol','st-shutter_box','st-sound_loud','st-the_new_music','st-treasureville','st-tribes','st-ushering_amiables','st-discipleship','st-community_centre'];
+  teamIds.forEach(function(id) { var el = document.getElementById(id); if (el && parseInt(el.value) > 0) hasAnyData = true; });
+  var tribeIds = ['sat-central','sat-yaba_1','sat-yaba_2','sat-surulere','sat-campus'];
+  tribeIds.forEach(function(id) { var el = document.getElementById(id); if (el && parseInt(el.value) > 0) hasAnyData = true; });
+  if (!hasAnyData) { toast('Please fill in at least one attendance figure before saving'); setBtnLoading('btn-save-att', false); return; }
   var week = document.getElementById('sv-week').value || 'Week 1';
   var imm = document.getElementById('imm-cnt').value || '0';
   var teamVals = [document.getElementById('st-admin').value||'0', document.getElementById('st-comms').value||'0', document.getElementById('st-data').value||'0', document.getElementById('st-evangelism').value||'0', document.getElementById('st-facility').value||'0', document.getElementById('st-interest_group').value||'0', document.getElementById('st-prayer').value||'0', document.getElementById('st-protocol').value||'0', document.getElementById('st-shutter_box').value||'0', document.getElementById('st-sound_loud').value||'0', document.getElementById('st-the_new_music').value||'0', document.getElementById('st-treasureville').value||'0', document.getElementById('st-tribes').value||'0', document.getElementById('st-ushering_amiables').value||'0', document.getElementById('st-discipleship').value||'0', document.getElementById('st-community_centre').value||'0'];
@@ -1522,7 +1549,7 @@ function saveTribeAtt() {
   writeToSheet('TribeAttendance', rows).then(function(ok) {
     if (ok) {
       renderTribeGrid(); // update dashboard immediately
-      toast('Tribe attendance saved — ' + rows.length + ' tribe(s) recorded');
+      toast('✓ ' + rows.length + ' tribe(s) saved — you can save remaining tribes separately');
     }
     setBtnLoading('btn-save-tribeatt', false);
   });
@@ -1807,6 +1834,33 @@ function renderImmerseChart() {
       '</div>';
     }).join('');
   }
+}
+
+
+function saveImmerse() {
+  var date = document.getElementById('imm-date').value;
+  var cnt  = document.getElementById('imm-cnt').value;
+  if (!cnt) { toast('Please enter an attendance figure'); return; }
+  var btn = document.getElementById('btn-save-imm');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  var row = [date || new Date().toISOString().split('T')[0], D.month, cnt];
+  writeToSheet('Immerse', row.length ? [row] : []).then(function(ok) {
+    if (ok) {
+      // Add to local records immediately
+      D.immerseRecords.push({ date: date || new Date().toISOString().split('T')[0], week: '', att: parseInt(cnt) });
+      renderImmerseChart();
+      // Update avg KPI
+      var avg = D.immerseRecords.length
+        ? Math.round(D.immerseRecords.reduce(function(s,r){ return s+r.att; },0) / D.immerseRecords.length)
+        : 0;
+      var kEl = document.getElementById('k-imm');
+      if (kEl) kEl.textContent = avg || '—';
+      document.getElementById('imm-cnt').value = '';
+      document.getElementById('imm-date').value = '';
+      toast('Immerse attendance saved — ' + cnt + ' attended');
+    }
+    if (btn) { btn.disabled = false; btn.textContent = '✓ Save Immerse Attendance'; }
+  });
 }
 
 // INIT — render immediately, sync in background
