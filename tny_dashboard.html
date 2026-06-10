@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>TNY Community Intelligence Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -182,6 +182,168 @@ tbody tr:hover td{background:#faf8f4;}
 .loading-text{font-size:14px;font-weight:600;color:var(--text-mid);}
 .loading-sub{font-size:11px;color:var(--text-mute);margin-top:4px;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px;}
+
+/* ══ MOBILE RESPONSIVE ══ */
+.hamburger {
+  display:none;
+  flex-direction:column;
+  gap:5px;
+  cursor:pointer;
+  padding:8px;
+  border-radius:7px;
+  background:var(--cream);
+  border:1px solid var(--border);
+}
+.hamburger span {
+  display:block;
+  width:20px;
+  height:2px;
+  background:var(--navy);
+  border-radius:2px;
+  transition:all .3s;
+}
+.sidebar-overlay {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(13,27,42,0.5);
+  z-index:9;
+}
+.sidebar-overlay.show { display:block; }
+
+@media (max-width: 768px) {
+  /* Sidebar becomes a drawer */
+  .sidebar {
+    position:fixed;
+    top:0; left:0; bottom:0;
+    transform:translateX(-100%);
+    transition:transform .28s ease;
+    z-index:100;
+    width:240px !important;
+    min-width:240px !important;
+  }
+  .sidebar.open { transform:translateX(0); }
+
+  /* Hamburger shows */
+  .hamburger { display:flex; }
+
+  /* Main takes full width */
+  .main { width:100%; }
+
+  /* Topbar compact */
+  .topbar { padding:0 14px; height:52px; gap:8px; }
+  .topbar-right { gap:6px; }
+  .btn-refresh { padding:6px 10px; font-size:11px; }
+  .btn-sec { padding:6px 10px; font-size:11px; }
+  .btn-primary { padding:6px 10px; font-size:11px; }
+  .page-title { font-size:15px; }
+  .month-sel { padding:4px 9px; font-size:11px; }
+
+  /* Content padding */
+  .content { padding:14px 12px; }
+
+  /* KPI grid — 2 columns on mobile */
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap:10px;
+  }
+  .kpi-val { font-size:26px !important; }
+  .kpi-card { padding:14px; }
+
+  /* Charts — stack vertically */
+  .charts-row {
+    grid-template-columns: 1fr !important;
+    gap:12px;
+  }
+
+  /* Forms — single column */
+  .form-grid {
+    grid-template-columns: 1fr !important;
+    gap:12px;
+  }
+  .form-2col {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Tribe grid — 2 columns */
+  .tribe-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap:10px;
+  }
+
+  /* Insights grid — single column */
+  .ins-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Upload hub — single column */
+  .upload-hub {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Tables — horizontal scroll */
+  .table-card { overflow-x:auto; }
+  table { min-width:560px; }
+  thead th { padding:7px 12px; font-size:9px; }
+  tbody td { padding:8px 12px; font-size:11px; }
+
+  /* Form inputs bigger for touch */
+  .form-inp, .form-sel {
+    padding:11px 12px !important;
+    font-size:14px !important;
+  }
+  .form-submit {
+    padding:14px !important;
+    font-size:14px !important;
+  }
+  .form-lbl { font-size:11px !important; }
+
+  /* Section service team grid — 2 cols on mobile */
+  #btn-save-att { font-size:13px; padding:13px; }
+
+  /* Attendance service teams — stack to 2 col */
+  div[style*="grid-template-columns:repeat(5,1fr)"] {
+    display:grid !important;
+    grid-template-columns:repeat(2,1fr) !important;
+    gap:8px !important;
+  }
+
+  /* Hide some topbar items on very small screens */
+  @media (max-width:420px) {
+    .btn-sec { display:none; }
+    .topbar-right { gap:4px; }
+  }
+
+  /* Month picker full width on mobile */
+  #month-picker {
+    left:12px !important;
+    right:12px !important;
+    width:auto !important;
+  }
+
+  /* Sec header stack on mobile */
+  .sec-hdr {
+    flex-direction:column;
+    align-items:flex-start;
+    gap:8px;
+  }
+
+  /* Tab row scrollable */
+  .tab-row { overflow-x:auto; width:100% !important; }
+
+  /* Search input full width */
+  .srch-inp { width:100% !important; }
+
+  /* Chart card padding */
+  .chart-card { padding:14px; }
+}
+
+@media (max-width:480px) {
+  .kpi-grid { grid-template-columns:repeat(2,1fr) !important; }
+  .kpi-val { font-size:22px !important; }
+  .tribe-grid { grid-template-columns:1fr 1fr !important; }
+}
+
 </style>
 </head>
 <body>
@@ -212,6 +374,9 @@ tbody tr:hover td{background:#faf8f4;}
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
+      <div class="hamburger" onclick="toggleSidebar()" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </div>
       <div class="page-title" id="topbar-title">Dashboard</div>
       <div class="month-sel" onclick="toggleMonthPicker()" id="month-sel-btn" style="position:relative;">📅 <span id="month-disp">June 2026</span> ▾</div>
 
@@ -1906,6 +2071,33 @@ function saveServiceTribeAtt() {
     if (btn) { btn.disabled = false; btn.textContent = '✓ Save Tribe Attendance at Service'; }
   });
 }
+
+
+// ── MOBILE SIDEBAR ──
+function toggleSidebar() {
+  var sb = document.querySelector('.sidebar');
+  var ov = document.getElementById('sidebar-overlay');
+  var isOpen = sb.classList.contains('open');
+  if (isOpen) {
+    sb.classList.remove('open');
+    ov.classList.remove('show');
+  } else {
+    sb.classList.add('open');
+    ov.classList.add('show');
+  }
+}
+function closeSidebar() {
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+// Close sidebar when a nav item is clicked on mobile
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.nav-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
+});
 
 // INIT — render immediately, sync in background
 renderDashboard();
